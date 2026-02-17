@@ -24,7 +24,7 @@ st.markdown("""
 
     .stButton>button { width: 100%; border-radius: 50px; height: 3.5em; background: linear-gradient(45deg, #00ff00, #008000); color: black; font-weight: bold; font-size: 20px; border: none; }
     
-    .status-display { padding: 15px; border-radius: 15px; text-align: center; font-size: 24px; font-weight: 900; margin-bottom: 10px; text-transform: uppercase; }
+    .status-display { padding: 15px; border-radius: 15px; text-align: center; font-size: 24px; font-weight: 900; margin-bottom: 10px; }
     .win-msg { background: rgba(0, 255, 0, 0.3); border: 2px solid #00ff00; color: #00ff00; }
     .loss-msg { background: rgba(255, 0, 0, 0.3); border: 2px solid #ff0000; color: #ff0000; }
 
@@ -37,7 +37,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Session State
+# Session State for Level and History
 if 'is_registered' not in st.session_state: st.session_state.is_registered = False
 if 'level_count' not in st.session_state: st.session_state.level_count = 1
 if 'last_prediction' not in st.session_state: st.session_state.last_prediction = ""
@@ -45,58 +45,58 @@ if 'last_prediction' not in st.session_state: st.session_state.last_prediction =
 # --- Page 1: Access Restricted ---
 if not st.session_state.is_registered:
     st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
-    st.markdown(f"""<div style='background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid #00ff00; margin-top: 20px;'><h2 style='color: #ffff00;'>⚠️ Access Restricted</h2><p style='color: white;'>Predictor-ai payanpadutha muthalil keela ulla link-al Register seyya vendum.</p><a href="https://www.66lotterya.com/?invitationCode=1645982010" target="_blank" class="reg-btn">CLICK HERE TO REGISTER</a></div>""", unsafe_allow_html=True)
-    if st.button("I HAVE REGISTERED ✅"):
+    st.markdown(f"""<div style='background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid #00ff00; margin-top: 20px;'><h2 style='color: #ffff00;'>⚠️ அனுமதி மறுக்கப்பட்டது</h2><p style='color: white;'>Predictor-ஐ பயன்படுத்த முதலில் கீழே உள்ள லிங்க்கில் Register செய்ய வேண்டும்.</p><a href="https://www.66lotterya.com/?invitationCode=1645982010" target="_blank" class="reg-btn">இங்கே கிளிக் செய்து பதிவிடவும்</a></div>""", unsafe_allow_html=True)
+    if st.button("நான் பதிவு செய்துவிட்டேன் ✅"):
         st.session_state.is_registered = True
         st.rerun()
 
 # --- Page 2: Predictor Interface ---
 else:
     st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
-    st.markdown("""<div class="rules-box">1. Keele irunthu melaga 5 result-ai mattum type seiyavum.<br>2. 8-Level Martingale Strategy-ai kattayam pinpatravum.</div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="rules-box">
+    1. கீழே இருந்து மேலாக 5 முடிவுகளை மட்டும் டைப் செய்யவும்.<br>
+    2. 8-Level Martingale முறையை கட்டாயம் பின்பற்றவும்.<br>
+    3. 90% மேலாக Accuracy வரும்போது மட்டும் முதலீடு செய்யவும்.
+    </div>""", unsafe_allow_html=True)
 
-    history_raw = st.text_input("Kadantha 5 mudivugal (B/S mattum):", max_chars=5, placeholder="Ex: BBSSS").upper()
-    period_raw = st.text_input("Adutha period en (3 Digits):", max_chars=3, placeholder="Ex: 055")
+    history_raw = st.text_input("கடந்த 5 முடிவுகள் (B/S மட்டும்):", max_chars=5, placeholder="Ex: BBSSS").upper()
+    period_raw = st.text_input("அடுத்த பீரியட் எண் (Last 3 Digits):", max_chars=3, placeholder="Ex: 055")
 
     if st.button("RESULT"):
         if (all(char in "BS" for char in history_raw) and len(history_raw) == 5) and (period_raw.isdigit() and len(period_raw) == 3):
-            # Automatic Win/Loss Check
-            last_actual_result = "BIG" if history_raw[-1] == "B" else "SMALL"
+            # Check Last Result for Win/Loss
+            last_actual = "BIG" if history_raw[-1] == "B" else "SMALL"
             
             if st.session_state.last_prediction != "":
-                if last_actual_result == st.session_state.last_prediction:
-                    st.markdown(f'<div class="status-display win-msg">LAST RESULT: WIN ✅</div>', unsafe_allow_html=True)
+                if last_actual == st.session_state.last_prediction:
+                    st.markdown(f'<div class="status-display win-msg">முந்தைய முடிவு: WIN ✅</div>', unsafe_allow_html=True)
                     st.session_state.level_count = 1
                 else:
-                    st.markdown(f'<div class="status-display loss-msg">LAST RESULT: LOSS ❌</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="status-display loss-msg">முந்தைய முடிவு: LOSS ❌</div>', unsafe_allow_html=True)
+                    st.session_state.level_count = st.session_state.level_count + 1 if st.session_state.level_count < 8 else 1
             
-            # Algorithm: Dragon Handling
+            # Dragon Pattern Algorithm
             if history_raw == "BBBBB": prediction = "BIG"
             elif history_raw == "SSSSS": prediction = "SMALL"
             else: prediction = "BIG" if history_raw[-1] == "S" else "SMALL"
             
-            # Save for next round
             st.session_state.last_prediction = prediction
             
-            with st.spinner('Analysing Trend...'):
+            with st.spinner('முடிவுகளை ஆய்வு செய்கிறது...'):
                 time.sleep(1)
             
             accuracy = random.randint(94, 98)
             st.markdown(f"""
             <div class="result-box">
-                <h3 style='color: #00f2fe; margin: 0;'>NEXT PREDICTION</h3>
+                <h3 style='color: #00f2fe; margin: 0;'>அடுத்த கணிப்பு</h3>
                 <h1 style='font-size: 80px; margin: 10px 0; letter-spacing: 5px;'>{prediction}</h1>
-                <div class="level-text">LEVEL {st.session_state.level_count} MAINTAIN PANU</div>
+                <div class="level-text">LEVEL {st.session_state.level_count} பயன்படுத்தவும்</div>
             </div>
             """, unsafe_allow_html=True)
             
-            st.write(f"Prediction Accuracy: {accuracy}%")
+            st.write(f"கணிப்பு துல்லியம்: {accuracy}%")
             st.progress(accuracy)
-
-            # Prepare Level for next round
-            if last_actual_result != st.session_state.last_prediction and st.session_state.last_prediction != "":
-                st.session_state.level_count = st.session_state.level_count + 1 if st.session_state.level_count < 8 else 1
         else:
-            st.error("Input sariyaga kudukavum!")
+            st.error("தயவுசெய்து 5 முடிவுகளையும் பீரியட் எண்ணையும் சரியாக உள்ளிடவும்!")
 
-    st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-icon">JOIN TELEGRAM CHANNEL</a>""", unsafe_allow_html=True)
+    st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-icon">TELEGRAM சேனலில் இணையுங்கள்</a>""", unsafe_allow_html=True)
