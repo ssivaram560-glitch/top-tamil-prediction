@@ -1,13 +1,20 @@
 import streamlit as st
 import random
 import time
+import re
 
-# Mobile view & Title setup
-st.set_page_config(page_title="Top தமிழ் Prediction", page_icon="💰🎯", layout="centered")
+# Mobile view setup
+st.set_page_config(page_title="siva prediction", page_icon="💰🎯", layout="centered")
 
-# Custom UI Styling
+# Custom UI Styling with GitHub & Footer Removal
 st.markdown("""
     <style>
+    /* GitHub Logo matrum Header-ai complete-ah maraikka */
+    header { visibility: hidden !important; }
+    footer { visibility: hidden !important; }
+    #MainMenu { visibility: hidden !important; }
+    .stDeployButton { display: none !important; }
+    
     @keyframes pulse {
         0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 136, 204, 0.7); }
         70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(0, 136, 204, 0); }
@@ -44,6 +51,9 @@ st.markdown("""
         animation: pulse 2s infinite; margin-top: 40px; border: 1px solid white;
     }
     .level-text { background: #ffffff; color: #000000; padding: 10px 20px; border-radius: 10px; font-weight: 900; font-size: 20px; display: inline-block; }
+    
+    /* Input field text color correction */
+    input { color: black !important; font-weight: bold !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -70,7 +80,7 @@ if not st.session_state.is_registered:
         st.rerun()
 
 else:
-    st.markdown("<div class='main-title'>💰 Top தமிழ் Earn 100k Prediction 🎯</div>", unsafe_allow_html=True)
+    st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
     
     st.markdown("""
     <div class="rules-box">
@@ -86,12 +96,17 @@ else:
     if 'level_count' not in st.session_state:
         st.session_state.level_count = 1
 
-    history_in = st.text_input("கடந்த 5 முடிவுகள் (Ex: BBSSS):", max_chars=5).upper()
-    period_in = st.text_input("அடுத்த பீரியட் எண் (Last 3 Digits):", max_chars=3)
+    # --- Validation Logic ---
+    history_raw = st.text_input("கடந்த 5 முடிவுகள் (B/S மட்டும்):", max_chars=5).upper()
+    period_raw = st.text_input("அடுத்த பீரியட் எண் (Numbers மட்டும்):", max_chars=3)
+
+    # Error flags
+    history_valid = all(char in "BS" for char in history_raw) if history_raw else False
+    period_valid = period_raw.isdigit() if period_raw else False
 
     if st.button("RESULT"):
-        if len(history_in) == 5 and period_in:
-            history_list = list(history_in)
+        if len(history_raw) == 5 and history_valid and period_valid:
+            history_list = list(history_raw)
             actual_now = history_list[-1]
 
             if st.session_state.last_pred_char:
@@ -101,7 +116,7 @@ else:
                 else:
                     st.markdown("<p style='color: #ff4b4b; text-align: center; font-size: 22px; font-weight: bold;'>LAST RESULT: LOSS ❌</p>", unsafe_allow_html=True)
                     st.session_state.level_count += 1
-                    if st.session_state.level_count > 4: st.session_state.level_count = 1
+                    if st.session_state.level_count > 8: st.session_state.level_count = 1
 
             with st.spinner('Analysing Trend patterns...'):
                 time.sleep(1.2)
@@ -115,9 +130,7 @@ else:
                 else:
                     prediction = "B" if history_list[-1] == "S" else "S"
 
-                # Variable accuracy for realism (Always between 85% to 98%)
                 accuracy_display = random.randint(85, 98)
-                
                 st.session_state.last_pred_char = prediction
                 full_res = "BIG" if prediction == "B" else "SMALL"
 
@@ -131,9 +144,13 @@ else:
                 
                 st.write(f"Prediction Accuracy: {accuracy_display}%")
                 st.progress(accuracy_display)
-                st.markdown(f"<p style='text-align: center; color: #ffff00; font-weight: bold; font-size: 18px;'>Confidence Level: {accuracy_display}%</p>", unsafe_allow_html=True)
         else:
-            st.error("5 Results மற்றும் 3 Digit Period கட்டாயம் தேவை!")
+            if history_raw and not history_valid:
+                st.error("தவறு! B அல்லது S மட்டுமே பயன்படுத்தவும்.")
+            elif period_raw and not period_valid:
+                st.error("தவறு! பீரியட் எண்ணில் எண்கள் மட்டுமே இருக்க வேண்டும்.")
+            else:
+                st.error("5 Results மற்றும் 3 Digit Period கட்டாயம் தேவை!")
 
     st.markdown(f"""
         <a href="https://t.me/toptamilearning100k" target="_blank" class="tg-link">
