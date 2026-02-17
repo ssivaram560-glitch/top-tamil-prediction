@@ -6,17 +6,19 @@ import base64
 # Mobile view setup
 st.set_page_config(page_title="siva prediction", page_icon="💰🎯", layout="centered")
 
-# --- Voice Function ---
+# --- Fixed Voice Function ---
 def speak(text):
-    # Text-to-Speech using a simple HTML5 hidden audio
-    # Note: Browsers may block auto-play without user interaction
-    b64 = base64.b64encode(text.encode()).decode()
-    md = f"""
-        <iframe allow="autoplay" src="https://translate.google.com/translate_tts?ie=UTF-8&q={text}&tl=ta&client=tw-ob" style="display:none"></iframe>
+    # Google TTS link
+    tts_url = f"https://translate.google.com/translate_tts?ie=UTF-8&q={text}&tl=ta&client=tw-ob"
+    # Audio tag with autoplay and unique key to trigger every time
+    audio_html = f"""
+        <audio autoplay>
+            <source src="{tts_url}" type="audio/mpeg">
+        </audio>
     """
-    st.markdown(md, unsafe_allow_html=True)
+    st.components.v1.html(audio_html, height=0)
 
-# Custom UI Styling
+# Custom UI Styling (Matha ethuvum mathala machi)
 st.markdown("""
     <style>
     header, footer, .stDeployButton, [data-testid="stStatusWidget"], [data-testid="stDecoration"] {
@@ -60,8 +62,7 @@ if not st.session_state.is_registered:
     st.markdown(f"""<div style='background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid #00ff00; margin-top: 20px;'><h2 style='color: #ffff00;'>⚠️ அனுமதி மறுக்கப்பட்டது</h2><p style='color: white;'>Predictor-ஐ பயன்படுத்த முதலில் கீழே உள்ள லிங்க்கில் Register செய்ய வேண்டும்.</p><a href="https://www.66lotterya.com/?invitationCode=1645982010" target="_blank" class="reg-btn">இங்கே கிளிக் செய்து பதிவிடவும்</a></div>""", unsafe_allow_html=True)
     if st.button("நான் பதிவு செய்துவிட்டேன் ✅"):
         st.session_state.is_registered = True
-        # Voice alert for instructions
-        speak("பதிவு செய்ததற்கு நன்றி. இப்போது கடந்த ஐந்து முடிவுகளை உள்ளிட்டு பலனை அறியவும். டெலிகிராம் சேனலில் இணைய மறக்காதீர்கள்.")
+        speak("பதிவு செய்ததற்கு நன்றி. இப்போது கடந்த ஐந்து முடிவுகளை உள்ளிட்டு பலனை அறியவும்.")
         st.rerun()
 
 # --- Page 2: Predictor Interface ---
@@ -89,7 +90,7 @@ else:
                     st.session_state.level_count = 1
                 else:
                     st.markdown(f'<div class="status-display loss-msg">LAST RESULT: LOSS ❌</div>', unsafe_allow_html=True)
-                    speak("இந்த முறை தோல்வி. அடுத்த லெவல் பயன்படுத்தவும்.")
+                    speak("தோல்வி. அடுத்த லெவல் பயன்படுத்தவும்.")
                     st.session_state.level_count = st.session_state.level_count + 1 if st.session_state.level_count < 8 else 1
             
             # 2-Level Logic (Dragon/Alternate)
@@ -100,7 +101,7 @@ else:
             
             st.session_state.last_prediction = prediction
             
-            # Final Result Voice
+            # Prediction Voice
             speak(f"அடுத்த கணிப்பு {prediction}. லெவல் {st.session_state.level_count}-ஐ பயன்படுத்தவும்.")
             
             accuracy = random.randint(95, 99)
