@@ -14,6 +14,11 @@ st.markdown("""
     #MainMenu { visibility: hidden !important; }
     .stDeployButton { display: none !important; }
     [data-testid="stStatusWidget"] { visibility: hidden !important; }
+
+    /* Hide the bottom-right Streamlit logo and footer bar */
+.viewerBadge_container__1QS1n { display: none !important; }
+footer { visibility: hidden !important; }
+[data-testid="stStatusWidget"] { visibility: hidden !important; }
     
     /* Hide the bottom-right Streamlit logo specifically */
     .viewerBadge_container__1QS1n { display: none !important; }
@@ -128,3 +133,4 @@ else:
             </a>
         </div>
     """, unsafe_allow_html=True)
+
