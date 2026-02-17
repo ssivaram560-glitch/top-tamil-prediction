@@ -28,8 +28,35 @@ st.markdown("""
     .win-msg { background: rgba(0, 255, 0, 0.3); border: 2px solid #00ff00; color: #00ff00; }
     .loss-msg { background: rgba(255, 0, 0, 0.3); border: 2px solid #ff0000; color: #ff0000; }
 
-    .reg-btn { display: block; background: #00ff00; color: black !important; padding: 15px; border-radius: 50px; font-weight: 900; text-decoration: none; text-align: center; margin: 20px 0; animation: pulse-green 2s infinite; font-size: 18px; }
-    .tg-btn { display: flex; align-items: center; justify-content: center; background: #0088cc; color: white !important; padding: 18px; border-radius: 15px; text-decoration: none; font-weight: 900; text-align: center; margin-top: 30px; animation: pulse-blue 2s infinite; border: 1px solid white; }
+    .reg-btn { 
+    display: block; 
+    width: 100%; 
+    background: #00ff00; 
+    color: black !important; 
+    padding: 15px; 
+    border-radius: 50px; 
+    font-weight: 900; 
+    text-decoration: none !important; 
+    text-align: center; 
+    margin: 20px 0; 
+    animation: pulse-green 2s infinite; 
+    font-size: 18px; 
+}
+    .tg-btn { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    background: #0088cc; 
+    color: white !important; 
+    padding: 18px; 
+    border-radius: 15px; 
+    text-decoration: none !important; 
+    font-weight: 900; 
+    text-align: center; 
+    margin-top: 30px; 
+    animation: pulse-blue 2s infinite; 
+    border: 1px solid white; 
+}
     .tg-icon { width: 25px; margin-right: 10px; }
 
     .result-box { padding: 25px; border-radius: 20px; border: 3px solid #00f2fe; background: rgba(0, 0, 0, 0.5); text-align: center; margin-top: 20px; }
@@ -45,8 +72,8 @@ if 'last_prediction' not in st.session_state: st.session_state.last_prediction =
 # --- Page 1: Registration ---
 if not st.session_state.is_registered:
     st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
-    st.markdown(f"""<div style='background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid #00ff00; margin-top: 20px;'><h2 style='color: #ffff00;'>⚠️ அனுமதி மறுக்கப்பட்டது</h2><p style='color: white;'>Predictor-ஐ பயன்படுத்த முதலில் கீழே உள்ள லிங்க்கில் Register செய்ய வேண்டும்.</p><a href="https://www.66lotterya.com/?invitationCode=1645982010" target="_blank" class="reg-btn">REGISTER HERE</a></div>""", unsafe_allow_html=True)
-    if st.button("நான் பதிவு செய்துவிட்டேன் ✅"):
+    st.markdown(f"""<div style='background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid #00ff00; margin-top: 20px;'><h2 style='color: #ffff00;'>⚠️ அனுமதி மறுக்கப்பட்டது</h2><p style='color: white;'>Predictor-ஐ பயன்படுத்த முதலில் கீழே உள்ள லிங்க்கில் Register செய்ய வேண்டும்.</p>
+      st.markdown('<a href="https://www.66lotterya.com/?invitationCode=1645982010" target="_blank" class="reg-btn">REGISTER HERE ✅</a>', unsafe_allow_html=True)
         st.session_state.is_registered = True
         st.rerun()
 
@@ -103,5 +130,6 @@ else:
         else:
             st.error("Inputs-ஐ சரியாக உள்ளிடவும்!")
 
-    st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-icon">JOIN TELEGRAM CHANNEL</a>""", unsafe_allow_html=True)
+    st.markdown('<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" style="width:25px; margin-right:10px;">JOIN TELEGRAM CHANNEL</a>', unsafe_allow_html=True)
+
 
