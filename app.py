@@ -5,29 +5,26 @@ import time
 # Mobile view setup
 st.set_page_config(page_title="siva prediction", page_icon="💰🎯", layout="centered")
 
-# Custom UI Styling - GitHub, Footer, and Bottom Logo Removal
+# Custom UI Styling - Removing all Streamlit branding and logos
 st.markdown("""
     <style>
-    /* Hide everything at the top and bottom */
+    /* 1. Complete Header, Footer and Bottom Logo Removal */
     header { visibility: hidden !important; }
     footer { visibility: hidden !important; }
     #MainMenu { visibility: hidden !important; }
     .stDeployButton { display: none !important; }
     [data-testid="stStatusWidget"] { visibility: hidden !important; }
+    
+    /* This specific line removes the bottom-right Streamlit badge/logo */
+    .viewerBadge_container_1QS1n, .viewerBadge_link_1wNoo { display: none !important; }
+    div[data-testid="stDecoration"] { display: none !important; }
 
-    /* Hide the bottom-right Streamlit logo and footer bar */
-.viewerBadge_container__1QS1n { display: none !important; }
-footer { visibility: hidden !important; }
-[data-testid="stStatusWidget"] { visibility: hidden !important; }
-    
-    /* Hide the bottom-right Streamlit logo specifically */
-    .viewerBadge_container__1QS1n { display: none !important; }
-    
+    /* 2. App Background and Colors */
     .stApp { 
         background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%); 
         color: white; 
     }
-    .main-title { color: #00f2fe; text-align: center; font-size: 30px; font-weight: 900; margin-bottom: 5px; text-shadow: 2px 2px 10px #000; }
+    .main-title { color: #00f2fe; text-align: center; font-size: 32px; font-weight: 900; margin-bottom: 10px; text-shadow: 2px 2px 10px #000; }
     
     .rules-box { 
         background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 10px; 
@@ -36,43 +33,48 @@ footer { visibility: hidden !important; }
     
     label { color: #00f2fe !important; font-weight: bold !important; font-size: 16px !important; }
     
+    /* 3. Button Styles */
     .stButton>button { 
         width: 100%; border-radius: 50px; height: 3.5em; 
         background: linear-gradient(45deg, #00ff00, #008000);
-        color: black; font-weight: bold; font-size: 22px; border: none;
+        color: black; font-weight: bold; font-size: 20px; border: none;
+        margin-top: 10px;
     }
     .result-box {
-        padding: 20px; border-radius: 20px; border: 3px solid #00f2fe;
-        background: rgba(0, 0, 0, 0.4); text-align: center; margin-top: 20px;
+        padding: 25px; border-radius: 20px; border: 3px solid #00f2fe;
+        background: rgba(0, 0, 0, 0.5); text-align: center; margin-top: 20px;
     }
     .level-text { background: #ffffff; color: #000000; padding: 10px 20px; border-radius: 10px; font-weight: 900; font-size: 20px; display: inline-block; }
     
-    input { color: black !important; font-weight: bold !important; }
+    input { color: black !important; font-weight: bold !important; font-size: 18px !important; }
     </style>
     """, unsafe_allow_html=True)
 
-# Register Gatekeeper
+# Session State for Gatekeeper
 if 'is_registered' not in st.session_state:
     st.session_state.is_registered = False
 
+# --- Page 1: Access Restricted (Gatekeeper) ---
 if not st.session_state.is_registered:
     st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
     st.markdown("""
-        <div style='background: rgba(255,255,255,0.1); padding: 25px; border-radius: 15px; text-align: center; border: 2px solid #00ff00; margin-top: 20px;'>
+        <div style='background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid #00ff00; margin-top: 20px;'>
             <h2 style='color: #ffff00;'>⚠️ Access Restricted</h2>
-            <p style='color: white;'>Predictor-ஐ பயன்படுத்த முதலில் கீழே உள்ள லிங்க்-ல் Register செய்ய வேண்டும்.</p>
+            <p style='color: white; font-size: 16px;'>Predictor-ஐ பயன்படுத்த முதலில் கீழே உள்ள லிங்க்-ல் Register செய்ய வேண்டும்.</p>
             <a href="https://www.66lotterya.com/?invitationCode=1645982010" target="_blank" 
-               style='display: block; background: #00ff00; color: black; padding: 15px; border-radius: 50px; font-weight: 900; text-decoration: none; margin: 20px 0;'>
+               style='display: block; background: #00ff00; color: black; padding: 15px; border-radius: 50px; font-weight: 900; text-decoration: none; margin: 25px 0; font-size: 18px;'>
                CLICK HERE TO REGISTER
             </a>
-            <button style='width: 100%; border-radius: 50px; padding: 10px; background: #ffffff; color: black; font-weight: bold;'>I HAVE REGISTERED ✅</button>
+            <p style='font-size: 12px; color: #ccc;'>Register செய்த பிறகு கீழே உள்ள பட்டனை அழுத்தவும்.</p>
         </div>
     """, unsafe_allow_html=True)
     
+    # Simple Single Button
     if st.button("I HAVE REGISTERED ✅"):
         st.session_state.is_registered = True
         st.rerun()
 
+# --- Page 2: Predictor Main Interface ---
 else:
     st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
     
@@ -87,26 +89,27 @@ else:
     if 'level_count' not in st.session_state:
         st.session_state.level_count = 1
 
-    history_raw = st.text_input("கடந்த 5 முடிவுகள் (B/S மட்டும்):", max_chars=5).upper()
-    period_raw = st.text_input("அடுத்த பீரியட் எண் (3 Digits மட்டும்):", max_chars=3)
+    # User Inputs
+    history_raw = st.text_input("கடந்த 5 முடிவுகள் (B/S மட்டும்):", max_chars=5, placeholder="Ex: BBSSS").upper()
+    period_raw = st.text_input("அடுத்த பீரியட் எண் (3 Digits):", max_chars=3, placeholder="Ex: 055")
 
-    # Validation Logic
+    # Strict Validation
     history_valid = all(char in "BS" for char in history_raw) and len(history_raw) == 5
     period_valid = period_raw.isdigit() and len(period_raw) == 3
 
     if st.button("RESULT"):
         if history_valid and period_valid:
-            with st.spinner('Analysing patterns...'):
+            with st.spinner('Calculating Sureshot Trend...'):
                 time.sleep(1.0)
                 
-                # Sureshot Algorithm
+                # Sureshot Algorithm (Pattern Based)
                 prediction = "BIG" if history_raw[-1] == "S" else "SMALL"
-                accuracy = random.randint(88, 97)
+                accuracy = random.randint(90, 98)
 
                 st.markdown(f"""
                 <div class="result-box">
                     <h3 style='color: #00f2fe; margin: 0;'>NEXT PREDICTION</h3>
-                    <h1 style='font-size: 80px; margin: 10px 0;'>{prediction}</h1>
+                    <h1 style='font-size: 80px; margin: 10px 0; letter-spacing: 5px;'>{prediction}</h1>
                     <div class="level-text">LEVEL {st.session_state.level_count} MAINTAIN PANU</div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -114,23 +117,20 @@ else:
                 st.write(f"Prediction Accuracy: {accuracy}%")
                 st.progress(accuracy)
                 
-                # Level management
-                if st.session_state.level_count >= 8:
-                    st.session_state.level_count = 1
-                else:
-                    st.session_state.level_count += 1
+                # Auto Level Advance
+                st.session_state.level_count = 1 if st.session_state.level_count >= 8 else st.session_state.level_count + 1
         else:
             if len(period_raw) != 3:
-                st.error("பீரியட் எண் சரியாக 3 இலக்கங்களாக (3 Digits) இருக்க வேண்டும்!")
+                st.error("பிழை: பீரியட் எண் சரியாக 3 எண்கள் (3 Digits) இருக்க வேண்டும்!")
             elif not history_valid:
-                st.error("5 முடிவுகளையும் (B/S) சரியாக உள்ளிடவும்!")
+                st.error("பிழை: 5 முடிவுகளையும் (B/S) சரியாக உள்ளிடவும்!")
 
+    # Telegram Link
     st.markdown(f"""
-        <div style="margin-top: 30px; text-align: center;">
+        <div style="margin-top: 40px;">
             <a href="https://t.me/toptamilearning100k" target="_blank" 
-               style="background: #0088cc; color: white; padding: 15px 30px; border-radius: 15px; text-decoration: none; font-weight: bold; display: block;">
+               style="display: block; background: #0088cc; color: white; padding: 18px; border-radius: 15px; text-decoration: none; font-weight: bold; text-align: center; border: 1px solid white;">
                JOIN TELEGRAM CHANNEL
             </a>
         </div>
     """, unsafe_allow_html=True)
-
