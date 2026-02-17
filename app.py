@@ -58,7 +58,7 @@ else:
     st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
     st.markdown("""<div class="rules-box">
     1. கடைசி 5 முடிவுகளை கீழே இருந்து மேலாக டைப் செய்யவும்.<br>
-    2. 3-Level Martingale-ஐ கட்டாயம் பின்பற்றவும்.<br>
+    2. 8-Level Martingale-ஐ கட்டாயம் பின்பற்றவும்.<br>
     3. Clear patterns (BBB/BSB) வரும்போது மட்டும் முதலீடு செய்யவும்.
     </div>""", unsafe_allow_html=True)
 
@@ -113,4 +113,5 @@ else:
             st.error("Inputs-ஐ சரியாக உள்ளிடவும்!")
 
     st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-icon">JOIN TELEGRAM CHANNEL</a>""", unsafe_allow_html=True)
+
 
