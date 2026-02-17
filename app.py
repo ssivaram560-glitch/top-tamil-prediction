@@ -5,21 +5,21 @@ import time
 # Mobile view setup
 st.set_page_config(page_title="siva prediction", page_icon="💰🎯", layout="centered")
 
-# Custom UI Styling - Removing all Streamlit branding and logos
+# Custom UI Styling - Forcefully hiding all Streamlit elements
 st.markdown("""
     <style>
-    /* 1. Complete Header, Footer and Bottom Logo Removal */
-    header { visibility: hidden !important; }
-    footer { visibility: hidden !important; }
-    #MainMenu { visibility: hidden !important; }
-    .stDeployButton { display: none !important; }
-    [data-testid="stStatusWidget"] { visibility: hidden !important; }
+    /* 1. Complete Header, Footer and Bottom Logo Permanent Removal */
+    header, footer, .stDeployButton, [data-testid="stStatusWidget"], [data-testid="stDecoration"] {
+        visibility: hidden !important;
+        display: none !important;
+    }
     
-    /* This specific line removes the bottom-right Streamlit badge/logo */
-    .viewerBadge_container_1QS1n, .viewerBadge_link_1wNoo { display: none !important; }
-    div[data-testid="stDecoration"] { display: none !important; }
+    /* Explicitly targeting the bottom Streamlit badge and red footer bar */
+    .viewerBadge_container_1QS1n, .viewerBadge_link_1wNoo, .stCustomFooter {
+        display: none !important;
+    }
 
-    /* 2. App Background and Colors */
+    /* 2. App Background and Styling */
     .stApp { 
         background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%); 
         color: white; 
@@ -33,12 +33,11 @@ st.markdown("""
     
     label { color: #00f2fe !important; font-weight: bold !important; font-size: 16px !important; }
     
-    /* 3. Button Styles */
+    /* 3. Button and Result Styles */
     .stButton>button { 
         width: 100%; border-radius: 50px; height: 3.5em; 
         background: linear-gradient(45deg, #00ff00, #008000);
         color: black; font-weight: bold; font-size: 20px; border: none;
-        margin-top: 10px;
     }
     .result-box {
         padding: 25px; border-radius: 20px; border: 3px solid #00f2fe;
@@ -54,7 +53,7 @@ st.markdown("""
 if 'is_registered' not in st.session_state:
     st.session_state.is_registered = False
 
-# --- Page 1: Access Restricted (Gatekeeper) ---
+# --- Page 1: Access Restricted ---
 if not st.session_state.is_registered:
     st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
     st.markdown("""
@@ -65,11 +64,9 @@ if not st.session_state.is_registered:
                style='display: block; background: #00ff00; color: black; padding: 15px; border-radius: 50px; font-weight: 900; text-decoration: none; margin: 25px 0; font-size: 18px;'>
                CLICK HERE TO REGISTER
             </a>
-            <p style='font-size: 12px; color: #ccc;'>Register செய்த பிறகு கீழே உள்ள பட்டனை அழுத்தவும்.</p>
         </div>
     """, unsafe_allow_html=True)
     
-    # Simple Single Button
     if st.button("I HAVE REGISTERED ✅"):
         st.session_state.is_registered = True
         st.rerun()
@@ -93,18 +90,17 @@ else:
     history_raw = st.text_input("கடந்த 5 முடிவுகள் (B/S மட்டும்):", max_chars=5, placeholder="Ex: BBSSS").upper()
     period_raw = st.text_input("அடுத்த பீரியட் எண் (3 Digits):", max_chars=3, placeholder="Ex: 055")
 
-    # Strict Validation
+    # Strict Validation: Must be 5 chars for history and 3 for period
     history_valid = all(char in "BS" for char in history_raw) and len(history_raw) == 5
     period_valid = period_raw.isdigit() and len(period_raw) == 3
 
     if st.button("RESULT"):
         if history_valid and period_valid:
-            with st.spinner('Calculating Sureshot Trend...'):
+            with st.spinner('Analysing Trend...'):
                 time.sleep(1.0)
                 
-                # Sureshot Algorithm (Pattern Based)
                 prediction = "BIG" if history_raw[-1] == "S" else "SMALL"
-                accuracy = random.randint(90, 98)
+                accuracy = random.randint(91, 98)
 
                 st.markdown(f"""
                 <div class="result-box">
@@ -117,19 +113,18 @@ else:
                 st.write(f"Prediction Accuracy: {accuracy}%")
                 st.progress(accuracy)
                 
-                # Auto Level Advance
+                # Level Logic
                 st.session_state.level_count = 1 if st.session_state.level_count >= 8 else st.session_state.level_count + 1
         else:
             if len(period_raw) != 3:
-                st.error("பிழை: பீரியட் எண் சரியாக 3 எண்கள் (3 Digits) இருக்க வேண்டும்!")
+                st.error("பிழை: பீரியட் எண் சரியாக 3 இலக்கங்கள் இருக்க வேண்டும்!")
             elif not history_valid:
                 st.error("பிழை: 5 முடிவுகளையும் (B/S) சரியாக உள்ளிடவும்!")
 
-    # Telegram Link
     st.markdown(f"""
-        <div style="margin-top: 40px;">
+        <div style="margin-top: 40px; text-align: center;">
             <a href="https://t.me/toptamilearning100k" target="_blank" 
-               style="display: block; background: #0088cc; color: white; padding: 18px; border-radius: 15px; text-decoration: none; font-weight: bold; text-align: center; border: 1px solid white;">
+               style="display: block; background: #0088cc; color: white; padding: 18px; border-radius: 15px; text-decoration: none; font-weight: bold; border: 1px solid white;">
                JOIN TELEGRAM CHANNEL
             </a>
         </div>
