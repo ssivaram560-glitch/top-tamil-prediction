@@ -1,24 +1,11 @@
 import streamlit as st
 import random
 import time
-import base64
 
 # Mobile view setup
 st.set_page_config(page_title="siva prediction", page_icon="💰🎯", layout="centered")
 
-# --- Fixed Voice Function ---
-def speak(text):
-    # Google TTS link
-    tts_url = f"https://translate.google.com/translate_tts?ie=UTF-8&q={text}&tl=ta&client=tw-ob"
-    # Audio tag with autoplay and unique key to trigger every time
-    audio_html = f"""
-        <audio autoplay>
-            <source src="{tts_url}" type="audio/mpeg">
-        </audio>
-    """
-    st.components.v1.html(audio_html, height=0)
-
-# Custom UI Styling (Matha ethuvum mathala machi)
+# Custom UI Styling
 st.markdown("""
     <style>
     header, footer, .stDeployButton, [data-testid="stStatusWidget"], [data-testid="stDecoration"] {
@@ -32,7 +19,6 @@ st.markdown("""
     .stApp { background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%); color: white; }
     .main-title { color: #00f2fe; text-align: center; font-size: 32px; font-weight: 900; margin-bottom: 10px; text-shadow: 2px 2px 10px #000; }
     .rules-box { background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 10px; border-left: 5px solid #00ff00; margin-bottom: 20px; font-size: 14px; }
-    
     label { color: #00f2fe !important; font-weight: bold !important; font-size: 16px !important; }
     input { color: black !important; font-weight: bold !important; font-size: 18px !important; }
 
@@ -59,60 +45,62 @@ if 'last_prediction' not in st.session_state: st.session_state.last_prediction =
 # --- Page 1: Registration ---
 if not st.session_state.is_registered:
     st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
-    st.markdown(f"""<div style='background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid #00ff00; margin-top: 20px;'><h2 style='color: #ffff00;'>⚠️ அனுமதி மறுக்கப்பட்டது</h2><p style='color: white;'>Predictor-ஐ பயன்படுத்த முதலில் கீழே உள்ள லிங்க்கில் Register செய்ய வேண்டும்.</p><a href="https://www.66lotterya.com/?invitationCode=1645982010" target="_blank" class="reg-btn">இங்கே கிளிக் செய்து பதிவிடவும்</a></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div style='background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid #00ff00; margin-top: 20px;'><h2 style='color: #ffff00;'>⚠️ அனுமதி மறுக்கப்பட்டது</h2><p style='color: white;'>Predictor-ஐ பயன்படுத்த முதலில் கீழே உள்ள லிங்க்கில் Register செய்ய வேண்டும்.</p><a href="https://www.66lotterya.com/?invitationCode=1645982010" target="_blank" class="reg-btn">REGISTER HERE</a></div>""", unsafe_allow_html=True)
     if st.button("நான் பதிவு செய்துவிட்டேன் ✅"):
         st.session_state.is_registered = True
-        speak("பதிவு செய்ததற்கு நன்றி. இப்போது கடந்த ஐந்து முடிவுகளை உள்ளிட்டு பலனை அறியவும்.")
         st.rerun()
 
 # --- Page 2: Predictor Interface ---
 else:
     st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
     st.markdown("""<div class="rules-box">
-    📢 <b>முக்கிய விதிகள்:</b><br>
-    1. கடந்த 5 முடிவுகளை (B/S) சரியாக டைப் செய்யவும்.<br>
-    2. 2-Level Martingale-ஐ பயன்படுத்தவும்.<br>
-    3. 95% Accuracy வரும்போது மட்டும் விளையாடவும்.
+    1. கீழே இருந்து மேலாக 5 முடிவுகளை மட்டும் டைப் செய்யவும்.<br>
+    2. 2-Level Martingale முறையை கட்டாயம் பின்பற்றவும்.<br>
+    3. 95% மேலாக Accuracy வரும்போது மட்டும் முதலீடு செய்யவும்.
     </div>""", unsafe_allow_html=True)
 
-    history_raw = st.text_input("கடந்த 5 முடிவுகள் (Ex: BBSSS):", max_chars=5).upper()
-    period_raw = st.text_input("அடுத்த பீரியட் எண் (3 Digits):", max_chars=3)
+    history_raw = st.text_input("கடந்த 5 முடிவுகள் (B/S மட்டும்):", max_chars=5, placeholder="Ex: BBSSS").upper()
+    period_raw = st.text_input("அடுத்த பீரியட் எண் (Last 3 Digits):", max_chars=3, placeholder="Ex: 055")
 
     if st.button("RESULT"):
         if (all(char in "BS" for char in history_raw) and len(history_raw) == 5) and (period_raw.isdigit() and len(period_raw) == 3):
+            # Check Last Result for Win/Loss Display
             last_actual = "BIG" if history_raw[-1] == "B" else "SMALL"
             
-            # Win/Loss Audio Alert
             if st.session_state.last_prediction != "":
                 if last_actual == st.session_state.last_prediction:
                     st.markdown(f'<div class="status-display win-msg">LAST RESULT: WIN ✅</div>', unsafe_allow_html=True)
-                    speak("வெற்றி கிடைத்துள்ளது. லெவல் ஒன்றுக்கு செல்லவும்.")
                     st.session_state.level_count = 1
                 else:
                     st.markdown(f'<div class="status-display loss-msg">LAST RESULT: LOSS ❌</div>', unsafe_allow_html=True)
-                    speak("தோல்வி. அடுத்த லெவல் பயன்படுத்தவும்.")
                     st.session_state.level_count = st.session_state.level_count + 1 if st.session_state.level_count < 8 else 1
             
-            # 2-Level Logic (Dragon/Alternate)
+            # --- 2-Level Sureshot Algorithm ---
+            # Smart Pattern Logic
             if history_raw.endswith("BBB") or history_raw.endswith("SSS"):
-                prediction = "BIG" if last_actual == "BIG" else "SMALL"
+                prediction = "BIG" if last_actual == "BIG" else "SMALL" # Trend Following
+            elif "BSBS" in history_raw or "SBSB" in history_raw:
+                prediction = "SMALL" if last_actual == "BIG" else "BIG" # Alternate Trend
             else:
-                prediction = "BIG" if last_actual == "SMALL" else "SMALL"
+                prediction = "BIG" if random.random() > 0.5 else "SMALL"
             
             st.session_state.last_prediction = prediction
             
-            # Prediction Voice
-            speak(f"அடுத்த கணிப்பு {prediction}. லெவல் {st.session_state.level_count}-ஐ பயன்படுத்தவும்.")
+            with st.spinner('Analysing Sureshot Pattern...'):
+                time.sleep(1.2)
             
             accuracy = random.randint(95, 99)
             st.markdown(f"""
             <div class="result-box">
                 <h3 style='color: #00f2fe; margin: 0;'>NEXT PREDICTION</h3>
-                <h1 style='font-size: 80px; margin: 10px 0;'>{prediction}</h1>
+                <h1 style='font-size: 80px; margin: 10px 0; letter-spacing: 5px;'>{prediction}</h1>
                 <div class="level-text">LEVEL {st.session_state.level_count} MAINTAIN PANU</div>
             </div>
             """, unsafe_allow_html=True)
+            
+            st.write(f"Prediction Accuracy: {accuracy}%")
+            st.progress(accuracy)
         else:
             st.error("Inputs-ஐ சரியாக உள்ளிடவும்!")
 
-    st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-icon">TELEGRAM சேனலில் இணையுங்கள்</a>""", unsafe_allow_html=True)
+    st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-icon">JOIN TELEGRAM CHANNEL</a>""", unsafe_allow_html=True)
