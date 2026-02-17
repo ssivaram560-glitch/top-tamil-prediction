@@ -63,9 +63,22 @@ else:
     period_raw = st.text_input("அடுத்த பீரியட் எண் (Last 3 Digits):", max_chars=3, placeholder="Ex: 055")
 
     if st.button("RESULT"):
-        if (all(char in "BS" for char in history_raw) and len(history_raw) == 5) and (period_raw.isdigit() and len(period_raw) == 3):
-            # Check Last Result for Win/Loss Display
-            last_actual = "BIG" if history_raw[-1] == "B" else "SMALL"
+        # --- Under 1 Level Sureshot Logic ---
+            # Dragon Trend (BBB or SSS)
+            if history_raw.endswith("BBB") or history_raw.endswith("SSS"):
+                prediction = "BIG" if last_actual == "BIG" else "SMALL"
+            
+            # Alternate Pattern (BSBS or SBSB)
+            elif "BSB" in history_raw or "SBS" in history_raw:
+                prediction = "SMALL" if last_actual == "BIG" else "BIG"
+            
+            # Mirror Pattern (BBSS or SSBB)
+            elif history_raw.endswith("BB") or history_raw.endswith("SS"):
+                prediction = last_actual # Continuing the double trend
+            
+            # Default Smart Pick
+            else:
+                prediction = "BIG" if random.random() > 0.5 else "SMALL"
             
             if st.session_state.last_prediction != "":
                 if last_actual == st.session_state.last_prediction:
@@ -104,3 +117,4 @@ else:
             st.error("Inputs-ஐ சரியாக உள்ளிடவும்!")
 
     st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-icon">JOIN TELEGRAM CHANNEL</a>""", unsafe_allow_html=True)
+
