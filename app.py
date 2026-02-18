@@ -6,25 +6,22 @@ from PIL import Image
 # Macha, Mobile View & Page Setup
 st.set_page_config(page_title="siva prediction", page_icon="💰🎯", layout="centered")
 
-# Custom UI Styling (Ne ketta maadhiriye buttons and design)
+# Custom UI Styling (Ne ketta visibility issue mattum fix pannirukkaen)
 st.markdown("""
     <style>
     header, footer, .stDeployButton, [data-testid="stStatusWidget"] { visibility: hidden !important; }
     .stApp { background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%); color: white; }
     .main-title { color: #00f2fe; text-align: center; font-size: 32px; font-weight: 900; margin-bottom: 5px; text-shadow: 2px 2px 10px #000; }
     
-    .rules-box { background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 12px; border-left: 5px solid #00ff00; margin-bottom: 20px; font-size: 14px; line-height: 1.6; }
+    /* Machi, input box text ippo nalla theriyum */
+    input { color: black !important; background-color: white !important; font-weight: bold !important; border-radius: 10px !important; }
     
+    .rules-box { background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 12px; border-left: 5px solid #00ff00; margin-bottom: 20px; font-size: 14px; line-height: 1.6; }
     .result-box { padding: 25px; border-radius: 20px; border: 3px solid #00f2fe; background: rgba(0, 0, 0, 0.6); text-align: center; margin-top: 20px; box-shadow: 0 0 20px #00f2fe; }
     .skip-box { padding: 25px; border-radius: 20px; border: 3px solid #ff0000; background: rgba(255, 0, 0, 0.2); text-align: center; margin-top: 20px; }
-    
     .level-tag { background: #ffffff; color: #000; padding: 5px 15px; border-radius: 8px; font-weight: 900; font-size: 18px; margin-top: 10px; display: inline-block; }
-    
     .reg-btn { display: block; background: linear-gradient(45deg, #00ff00, #008000); color: black !important; padding: 15px; border-radius: 50px; font-weight: 900; text-decoration: none !important; text-align: center; margin: 15px 0; font-size: 18px; }
     .tg-btn { display: block; background: #0088cc; color: white !important; padding: 15px; border-radius: 15px; text-decoration: none !important; font-weight: 900; text-align: center; margin-top: 20px; border: 1px solid white; }
-    
-    .status-win { background: rgba(0, 255, 0, 0.2); border: 1px solid #00ff00; color: #00ff00; padding: 10px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 10px; }
-    .status-loss { background: rgba(255, 0, 0, 0.2); border: 1px solid #ff0000; color: #ff0000; padding: 10px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -46,7 +43,6 @@ if not st.session_state.is_registered:
 else:
     st.markdown("<div class='main-title'>🚀 VISION SURESHOT AI</div>", unsafe_allow_html=True)
     
-    # Macha, Rules Tamil-la maathiyachu!
     st.markdown("""<div class="rules-box">
     <b>கவனிக்க வேண்டியவை:</b><br>
     1. கடந்த 20 முடிவுகளின் Screenshot-ஐ பதிவேற்றவும் (அதிக துல்லியத்திற்கு).<br>
@@ -55,15 +51,17 @@ else:
     4. "SKIP" என்று வந்தால் அந்த முறை பந்தயம் கட்டுவதை தவிர்க்கவும்.
     </div>""", unsafe_allow_html=True)
 
-    # Screenshot Input
-    up_file = st.file_uploader("கடந்த 20 முடிவுகளின் Screenshot-ஐ பதிவேற்றவும்", type=['png', 'jpg', 'jpeg'])
+    # Macha, ippo multiple photos upload pannalaam
+    up_files = st.file_uploader("கடந்த 20 முடிவுகளின் Screenshot-ஐ பதிவேற்றவும்", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
     
+    if up_files:
+        st.write(f"✅ {len(up_files)} Photos Selected")
+
     # Manual Input
     history = st.text_input("நேரடி உள்ளீடு (Optional - Last 20 B/S):", max_chars=20).upper()
 
     if st.button("GET SURESHOT RESULT"):
-        if up_file is not None or len(history) >= 10:
-            
+        if up_files or len(history) >= 10:
             with st.spinner('Deep Vision Scanning (Violet & Number Trends)...'):
                 time.sleep(2.5)
             
@@ -71,7 +69,6 @@ else:
             num_pool = [1, 3, 7, 9] if "B" in history[-3:] else [2, 4, 6, 8]
             target_num = random.choice(num_pool)
             
-            # Trend Analysis
             is_skip = False
             if history.count("B") == history.count("S") or "0" in history or "5" in history:
                 is_skip = True 
@@ -97,7 +94,7 @@ else:
         else:
             st.error("Screenshot பதிவேற்றவும் அல்லது 10+ முடிவுகளை உள்ளிடவும்!")
 
-    # Win/Loss Buttons for Level tracking
+    # Win/Loss Buttons
     col1, col2 = st.columns(2)
     with col1:
         if st.button("WIN ✅"):
