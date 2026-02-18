@@ -48,7 +48,8 @@ def show_rules():
     🔹 1. Register பட்டனை அழுத்தி கணக்கை உருவாக்கவும் ✅<br>
     🔹 2. Period Number (3 digits) உள்ளிடவும் ✍️<br>
     🔹 3. <b>கீழே இருந்து மேலாக (Bottom to Top) வரிசையாக type செய்யவும்</b> 💪🏼<br>
-    🔹 4. Pattern சரியில்லை எனில் SKIP செய்யவும் ⚠️
+    🔹 4. Pattern சரியில்லை எனில் SKIP செய்யவும் ⚠️<br>
+    🔹 5. minimum 7 level ஐ maintain பண்ணவும்
     </div>""", unsafe_allow_html=True)
 
 # Session State for Real Tracking
@@ -67,7 +68,7 @@ if not st.session_state.registered:
 
 # --- PAGE 2: PREDICTOR ---
 else:
-    st.markdown("<div class='main-title'>🚀 SIVA SURESHOT AI</div>", unsafe_allow_html=True)
+    st.markdown("<div class='main-title'>🚀 SIVA SURESHOT PREDICTION 💥</div>", unsafe_allow_html=True)
     show_rules() 
     
     period = st.text_input("அடுத்த Period Number (Max 3):", placeholder="Ex: 314", max_chars=3)
@@ -107,3 +108,4 @@ else:
             st.error("சரியான தகவல்களை உள்ளிடவும்! (Ex: 304, BBBSSS)")
 
     st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn">✈️ JOIN TELEGRAM CHANNEL</a>""", unsafe_allow_html=True)
+
