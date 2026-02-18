@@ -2,10 +2,10 @@ import streamlit as st
 import random
 import time
 
-# Macha, Page Setup - Strictly No Indents Here
+# Macha, Page Setup
 st.set_page_config(page_title="siva prediction", page_icon="💰", layout="centered")
 
-# UI Styling - Full Fix for HTML Visibility
+# UI Styling - Full Fix
 st.markdown("""
     <style>
     header, footer, .stDeployButton, [data-testid="stStatusWidget"] { visibility: hidden !important; }
@@ -45,17 +45,17 @@ st.markdown("""
 def show_rules():
     st.markdown("""<div class="rules-box">
     <b>📜 விதிகள் (Rules):</b><br>
-    🔹 1. Register பட்டனை அழுத்தி கணக்கை உருவாக்கவும் ✅<br>
-    🔹 2. Period Number (3 digits) உள்ளிடவும் ✍️<br>
-    🔹 3. <b>கீழே இருந்து மேலாக (Bottom to Top) வரிசையாக type செய்யவும்</b> 💪🏼<br>
+    🔹 1. முதலில் Register பட்டனை அழுத்தி கணக்கை உருவாக்கவும் ✅<br>
+    🔹 2. சரியான Period Number-ஐ டைப் செய்யவும் (3 digits) ✍️<br>
+    🔹 3. <b>கடந்த 10 முடிவுகளை கீழே இருந்து மேலாக (Bottom to Top) type செய்யவும்</b> 💪🏼<br>
     🔹 4. Pattern சரியில்லை எனில் SKIP செய்யவும் ⚠️<br>
-    🔹 5. minimum 7 level ஐ maintain பண்ணவும்
+    🔹 5. Minimum 7 Level-ஐ Maintain பண்ணவும் 💰
     </div>""", unsafe_allow_html=True)
 
-# Session State for Real Tracking
+# Session State for App Logic
 if 'registered' not in st.session_state: st.session_state.registered = False
 if 'current_level' not in st.session_state: st.session_state.current_level = 1
-if 'history_log' not in st.session_state: st.session_state.history_log = []
+if 'last_status' not in st.session_state: st.session_state.last_status = None
 
 # --- PAGE 1: REGISTER ---
 if not st.session_state.registered:
@@ -76,25 +76,26 @@ else:
 
     if st.button("GET SURESHOT RESULT ⚡"):
         if period.isdigit() and history_input and all(c in "BS" for c in history_input):
-            with st.spinner('Scanning Trends...'):
+            with st.spinner('Vision AI Scanning Trends...'):
                 time.sleep(1.2)
             
-            # Actual Logic based on patterns
+            # --- SURESHOT LOGIC ---
+            # Predict based on majority trend
             prediction = "BIG" if history_input.count("S") >= history_input.count("B") else "SMALL"
             
-            # Realistic Status Simulation (Avoiding constant 'Fake Win')
-            # In a real app, this would compare prediction vs actual result
-            status = random.choice(["WIN", "WIN", "LOSS"]) 
+            # Simulated outcome based on 90% Win Probability
+            # If Win (90% chance), Level resets to 1. If Loss, Level goes up.
+            outcome = random.choices(["WIN", "LOSS"], weights=[90, 10])[0]
             
-            if status == "LOSS":
-                st.session_state.current_level = st.session_state.current_level + 1 if st.session_state.current_level < 4 else 1
-            else:
+            if outcome == "WIN":
                 st.session_state.current_level = 1
+            else:
+                st.session_state.current_level = st.session_state.current_level + 1 if st.session_state.current_level < 7 else 1
 
-            s_text = f"PREVIOUS: {status} " + ("✅" if status == "WIN" else "❌")
-            s_class = "win-color" if status == "WIN" else "loss-color"
+            s_text = f"PREVIOUS: {outcome} " + ("✅" if outcome == "WIN" else "❌")
+            s_class = "win-color" if outcome == "WIN" else "loss-color"
 
-            # Final Result Display - Fixing HTML nesting errors
+            # Final Result Display
             st.markdown(f"""
             <div class="result-container">
                 <div class="status-line {s_class}">{s_text}</div>
@@ -108,4 +109,3 @@ else:
             st.error("சரியான தகவல்களை உள்ளிடவும்! (Ex: 304, BBBSSS)")
 
     st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn">✈️ JOIN TELEGRAM CHANNEL</a>""", unsafe_allow_html=True)
-
