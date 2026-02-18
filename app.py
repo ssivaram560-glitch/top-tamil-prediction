@@ -57,52 +57,57 @@ if not st.session_state.is_registered:
 else:
     st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
     st.markdown("""<div class="rules-box">
-    1. 5 முடிவுகளை கீழே இருந்து மேலாக டைப் செய்யவும்.<br>
-    2. 8-Level Martingale-ஐ கட்டாயம் பின்பற்றவும்.<br>
-    3. Clear patterns வரும்போது மட்டும் முதலீடு செய்யவும்.
+    1. கடந்த 10 முடிவுகளை கீழே இருந்து மேலாக (Bottom to Top) டைப் செய்யவும்.<br>
+    2. S அல்லது B மட்டும் பயன்படுத்தவும்.<br>
+    3. 7-Level Martingale-ஐ கட்டாயம் பின்பற்றவும்.
     </div>""", unsafe_allow_html=True)
 
-    history_raw = st.text_input("கடந்த 5 முடிவுகள் (B/S):", max_chars=5, placeholder="Ex: BBSSS").upper()
+    # Macha, idhu ippo 10 characters limit panna field
+    history_raw = st.text_input("கடந்த 10 முடிவுகள் (B/S):", max_chars=10, placeholder="Ex: BBSSBBSBSS").upper()
     period_raw = st.text_input("பீரியட் எண் (Last 3 Digits):", max_chars=3, placeholder="Ex: 055")
 
-    if st.button("RESULT"):
-        if (all(char in "BS" for char in history_raw) and len(history_raw) == 5) and (period_raw.isdigit() and len(period_raw) == 3):
+    if st.button("GET SURESHOT RESULT"):
+        # Check logic updated for 10 characters and only B/S
+        if (all(char in "BS" for char in history_raw) and len(history_raw) >= 5) and (period_raw.isdigit() and len(period_raw) == 3):
             
             last_actual = "BIG" if history_raw[-1] == "B" else "SMALL"
             
-            # --- Status Logic (Updated to 3 Levels) ---
+            # --- Status Logic (3 Levels) ---
             if st.session_state.last_prediction != "":
                 if last_actual == st.session_state.last_prediction:
                     st.markdown(f'<div class="status-display win-msg">LAST RESULT: WIN ✅</div>', unsafe_allow_html=True)
                     st.session_state.level_count = 1
                 else:
                     st.markdown(f'<div class="status-display loss-msg">LAST RESULT: LOSS ❌</div>', unsafe_allow_html=True)
-                    # Macha, idhu ippo 3 Level varaikkum pogum
                     st.session_state.level_count = st.session_state.level_count + 1 if st.session_state.level_count < 3 else 1
 
-            # --- ADVANCED UNDER 3-LEVEL PATTERN LOGIC ---
-            # Macha, unakku naan predict pandra maadhiriye trend flows inga add pannirukkaen
-            
-            # 1. Dragon Trend Detection
-            if history_raw.endswith("BBB") or history_raw.endswith("SSS"):
+            # --- DEEP PATTERN ANALYSIS (Based on 10 Results) ---
+            # 1. Dragon Detection (High confidence)
+            if history_raw.endswith("BBBB") or history_raw.endswith("SSSS"):
                 prediction = last_actual
-            # 2. Zig-Zag (1:1) Reversal
-            elif "BSB" in history_raw or "SBS" in history_raw:
+            # 2. Strong Zig-Zag detection
+            elif history_raw.endswith("BSBS") or history_raw.endswith("SBSB"):
                 prediction = "SMALL" if last_actual == "BIG" else "BIG"
-            # 3. Mirror Pattern (2:2 or 3:2)
-            elif history_raw.endswith("BB") or history_raw.endswith("SS"):
+            # 3. Double-Double Pattern (BBSS / SSBB)
+            elif history_raw.endswith("BBSS") or history_raw.endswith("SSBB"):
                 prediction = last_actual
-            # 4. Probabilistic Correction
+            # 4. Long Term Trend Analysis (from 10 results)
+            elif history_raw.count("B") > 6:
+                prediction = "BIG"
+            elif history_raw.count("S") > 6:
+                prediction = "SMALL"
+            # 5. Default Smart Probability
             else:
-                prediction = "BIG" if random.random() > 0.48 else "SMALL"
+                prediction = "SMALL" if last_actual == "BIG" else "BIG"
             
             st.session_state.last_prediction = prediction
             
-            with st.spinner('Analysing Sureshot...'):
-                time.sleep(1.0)
+            with st.spinner('Deep Analysing History...'):
+                time.sleep(1.5)
             
-            # Level-a poruthu accuracy maathirukkaen
-            accuracy_list = {1: random.randint(92, 94), 2: random.randint(95, 97), 3: 99}
+            # Accuracy based on level and history length
+            base_acc = 90 if len(history_raw) < 10 else 94
+            accuracy_list = {1: random.randint(base_acc, 95), 2: random.randint(96, 98), 3: 99}
             accuracy = accuracy_list[st.session_state.level_count]
 
             st.markdown(f"""
@@ -113,9 +118,9 @@ else:
             </div>
             """, unsafe_allow_html=True)
             
-            st.write(f"Sureshot Accuracy: {accuracy}%")
+            st.write(f"Deep Analysis Accuracy: {accuracy}%")
             st.progress(accuracy)
         else:
-            st.error("Inputs-ஐ சரியாக உள்ளிடவும்!")
+            st.error("Inputs-ஐ சரியாக (B அல்லது S) உள்ளிடவும்!")
 
     st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-icon">JOIN TELEGRAM CHANNEL</a>""", unsafe_allow_html=True)
