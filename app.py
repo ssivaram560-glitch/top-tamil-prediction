@@ -1,4 +1,4 @@
-    import streamlit as st
+import streamlit as st
 import random
 import time
 
@@ -116,3 +116,4 @@ else:
             st.error("சரியான தகவல்களை உள்ளிடவும் மச்சி! (Period: Numbers, History: B/S only)")
 
     st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn">✈️ JOIN TELEGRAM CHANNEL</a>""", unsafe_allow_html=True)
+
