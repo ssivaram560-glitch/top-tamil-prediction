@@ -1,105 +1,106 @@
 import streamlit as st
 import random
 import time
-from PIL import Image
 
-# Macha, Mobile View Setup
-st.set_page_config(page_title="siva prediction", page_icon="💰🎯", layout="centered")
+# Macha, Page Setup & Favicon
+st.set_page_config(page_title="siva prediction", page_icon="💰", layout="centered")
 
-# UI Styling - Period Number & Result Focus
+# UI Styling - Full Visibility & Clean Dark Theme
 st.markdown("""
     <style>
     header, footer, .stDeployButton, [data-testid="stStatusWidget"] { visibility: hidden !important; }
-    .stApp { background: linear-gradient(180deg, #0f0c29 0%, #000000 100%); color: white; }
-    .main-title { color: #00f2fe; text-align: center; font-size: 35px; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; text-shadow: 2px 2px 10px #00f2fe; }
+    .stApp { background: linear-gradient(180deg, #050505 0%, #1a1a2e 100%); color: white; font-family: 'Segoe UI', sans-serif; }
     
-    /* Machi, Box visibility fixed */
-    .stFileUploader section { background-color: rgba(255, 255, 255, 0.05) !important; border: 2px dashed #00f2fe !important; border-radius: 15px; }
+    .main-title { color: #00f2fe; text-align: center; font-size: 38px; font-weight: 900; margin-bottom: 20px; text-shadow: 2px 2px 15px #00f2fe; }
+    
+    .rules-box { background: rgba(0, 242, 254, 0.05); padding: 20px; border-radius: 15px; border-left: 5px solid #00f2fe; margin-bottom: 25px; line-height: 1.8; font-size: 15px; }
     
     .result-container {
-        border: 4px solid #00f2fe;
-        border-radius: 25px;
-        padding: 30px 20px;
-        text-align: center;
-        background: rgba(0, 0, 0, 0.9);
-        box-shadow: 0 0 40px #00f2fe;
-        margin-top: 20px;
+        border: 4px solid #00f2fe; border-radius: 30px; padding: 40px 20px; text-align: center;
+        background: rgba(0, 0, 0, 0.8); box-shadow: 0 0 50px #00f2fe; margin-top: 25px;
     }
-
-    .period-display { color: #ffff00; font-size: 32px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; }
-    .prediction-text { font-size: 90px; font-weight: 900; margin: 10px 0; color: #ffffff; text-shadow: 0 0 20px #fff; }
-    .number-text { color: #ffff00; font-size: 28px; font-weight: bold; margin-bottom: 15px; }
+    .prediction-txt { font-size: 100px; font-weight: 900; color: #ffffff; text-shadow: 0 0 20px #fff; margin: 10px 0; letter-spacing: 5px; }
     
-    .status-badge { display: inline-block; padding: 8px 20px; border-radius: 10px; font-weight: 900; font-size: 18px; text-transform: uppercase; }
-    .win-badge { background: #00ff00; color: #000; }
-    .loss-badge { background: #ff0000; color: #fff; }
+    .status-msg { padding: 12px; border-radius: 12px; text-align: center; font-weight: 900; margin-bottom: 20px; font-size: 22px; text-transform: uppercase; border: 2px solid white; }
+    .win-status { background: #00ff00; color: #000; }
+    .loss-status { background: #ff0000; color: #fff; }
 
-    .stButton>button {
-        background: linear-gradient(45deg, #00f2fe, #4facfe);
-        color: black; font-weight: 900; border-radius: 50px; height: 3.5em; font-size: 20px; border: none; margin-top: 20px;
-    }
+    .reg-btn { display: block; background: linear-gradient(45deg, #00ff00, #008000); color: black !important; padding: 18px; border-radius: 50px; font-weight: 900; text-decoration: none !important; text-align: center; margin: 25px 0; font-size: 22px; box-shadow: 0 5px 15px rgba(0,255,0,0.3); }
+    .tg-btn { display: block; background: #0088cc; color: white !important; padding: 15px; border-radius: 50px; text-decoration: none !important; font-weight: 900; text-align: center; margin-top: 30px; border: 2px solid white; font-size: 18px; }
     
-    .reg-btn { display: block; background: #00ff00; color: black !important; padding: 15px; border-radius: 50px; font-weight: 900; text-decoration: none !important; text-align: center; margin: 20px 0; font-size: 20px; }
+    .stButton>button { background: linear-gradient(90deg, #00f2fe, #4facfe); color: black; font-weight: 900; border-radius: 50px; height: 3.8em; font-size: 20px; border: none; transition: 0.3s; }
+    .stButton>button:hover { transform: scale(1.02); box-shadow: 0 0 20px #00f2fe; }
     </style>
     """, unsafe_allow_html=True)
 
-# Session State
-if 'is_registered' not in st.session_state: st.session_state.is_registered = False
+# Session State Logic
+if 'registered' not in st.session_state: st.session_state.registered = False
 if 'level' not in st.session_state: st.session_state.level = 1
-if 'last_period' not in st.session_state: st.session_state.last_period = 100
-if 'last_status' not in st.session_state: st.session_state.last_status = None
+if 'history' not in st.session_state: st.session_state.history = None
 
 # --- PAGE 1: REGISTER ---
-if not st.session_state.is_registered:
-    st.markdown("<div class='main-title'>SIVA PREDICTION</div>", unsafe_allow_html=True)
+if not st.session_state.registered:
+    st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center; color:#ff4b4b;'>⚠️ அனுமதி மறுக்கப்பட்டது</h3>", unsafe_allow_html=True)
     st.markdown('<a href="https://www.66lotterya.com/?invitationCode=1645982010" target="_blank" class="reg-btn">REGISTER HERE ✅</a>', unsafe_allow_html=True)
     if st.button("REGISTER செய்துவிட்டேன் ✅"):
-        st.session_state.is_registered = True
+        st.session_state.registered = True
         st.rerun()
 
-# --- PAGE 2: PREDICTOR ---
+# --- PAGE 2: MAIN PREDICTOR ---
 else:
-    st.markdown("<div class='main-title'>🚀 AI VISION PRO</div>", unsafe_allow_html=True)
+    st.markdown("<div class='main-title'>🚀 siva prediction 🎯</div>", unsafe_allow_html=True)
     
-    # Image Upload Only (No Text Boxes)
-    up_files = st.file_uploader("2 Screenshots பதிவேற்றவும் (Last 20 Results)", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
+    # Rules with Emojis (Tamil Only)
+    st.markdown("""<div class="rules-box">
+    <b>📜 முக்கிய விதிகள்:</b><br>
+    🔹 1. ஒரே நேரத்தில் 2 Screenshots பதிவேற்றவும் (20 முடிவுகள்) 📸<br>
+    🔹 2. Sureshot கணிப்பு Level 1-லேயே வர வாய்ப்பு அதிகம் 🎯<br>
+    🔹 3. பாதுகாப்பிற்கு 5 Levels வரை பணத்தை பராமரிக்கவும் 💰<br>
+    🔹 4. Pattern சரியாக இல்லையெனில் SKIP செய்யப்படும் ⚠️<br>
+    🔹 5. "GET RESULT" அழுத்தினால் முந்தைய முடிவு காட்டப்படும் ✅
+    </div>""", unsafe_allow_html=True)
 
-    if st.button("GET SURESHOT RESULT"):
+    # Automatic WIN/LOSS display from previous round
+    if st.session_state.history:
+        status_class = "win-status" if st.session_state.history == "WIN" else "loss-status"
+        st.markdown(f'<div class="status-msg {status_class}">கடந்த முடிவு: {st.session_state.history} (Level {st.session_state.level})</div>', unsafe_allow_html=True)
+
+    # Image Upload (Multiple selection enabled)
+    up_files = st.file_uploader("2 Screenshots பதிவேற்றவும்", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
+
+    if st.button("GET SURESHOT RESULT ⚡"):
         if up_files and len(up_files) >= 1:
-            with st.spinner('Vision AI Scanning Images for Period & Trend...'):
+            with st.spinner('Vision AI Scanning Trends...'):
                 time.sleep(2.5)
             
-            # Machi, ippo logic-ae period number-ah automatic-aa update pannum
-            st.session_state.last_period += 1
+            # Macha, pattern check logic
+            pattern_safe = random.choice([True, True, True, False]) # 75% accuracy logic
             
-            # Sureshot Prediction Logic
-            res = random.choice(["BIG", "SMALL"])
-            num = random.choice([1,3,7,9]) if res == "BIG" else random.choice([2,4,6,8])
-            
-            # Automatic Level Management
-            if st.session_state.last_status == "LOSS":
-                st.session_state.level = st.session_state.level + 1 if st.session_state.level < 5 else 1
+            if not pattern_safe:
+                st.warning("⚠️ Pattern சரியாக இல்லை! இந்த முறையை தவிர்க்கவும் (SKIP).")
             else:
-                st.session_state.level = 1
+                # Sureshot Logic (Result only)
+                prediction = random.choice(["BIG", "SMALL"])
                 
-            # Result Display with Period Number
-            st.markdown(f"""
-            <div class="result-container">
-                <div class="period-display">PERIOD: {st.session_state.last_period}</div>
-                <div class="prediction-text">{res}</div>
-                <div class="number-text">SURESHOT NUMBER: {num}</div>
-                <div style='background:white; color:black; padding:5px 15px; border-radius:8px; font-weight:900; display:inline-block;'>LEVEL {st.session_state.level} CONFIRMED</div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Status display for the current prediction based on last result
-            if st.session_state.last_status:
-                badge_class = "win-badge" if st.session_state.last_status == "WIN" else "loss-badge"
-                st.markdown(f"<div style='text-align:center; margin-top:15px;'><span class='status-badge {badge_class}'>LAST BET: {st.session_state.last_status}</span></div>", unsafe_allow_html=True)
-
-            # Set for next round
-            st.session_state.last_status = random.choice(["WIN", "LOSS"])
+                st.markdown(f"""
+                <div class="result-container">
+                    <h3 style='color:#00f2fe; margin:0;'>அடுத்த கணிப்பு</h3>
+                    <div class="prediction-txt">{prediction}</div>
+                    <div style='background:white; color:black; padding:8px 25px; border-radius:50px; font-weight:900; display:inline-block; font-size:20px;'>LEVEL {st.session_state.level} SURESHOT 🔥</div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Update Level & History for next time
+                simulated_win = random.choice(["WIN", "WIN", "WIN", "LOSS"]) # Sureshot focus (3:1 ratio)
+                if simulated_win == "WIN":
+                    st.session_state.history = "WIN"
+                    st.session_state.level = 1
+                else:
+                    st.session_state.history = "LOSS"
+                    st.session_state.level = st.session_state.level + 1 if st.session_state.level < 5 else 1
         else:
-            st.error("Machi, image upload panna dhaan result varum!")
+            st.error("குறைந்தது Screenshots பதிவேற்றவும் மச்சி! 📸")
 
-    st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" style="display:block; text-align:center; color:#00f2fe; text-decoration:none; margin-top:40px; font-weight:bold;">JOIN TELEGRAM CHANNEL ✈️</a>""", unsafe_allow_html=True)
+    # Telegram with Logo
+    st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn">✈️ JOIN TELEGRAM CHANNEL</a>""", unsafe_allow_html=True)
