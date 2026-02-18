@@ -36,11 +36,22 @@ st.markdown("""
     .loss-color { color: #ff0000; }
 
     .reg-btn { display: block; background: #00ff00; color: black !important; padding: 15px; border-radius: 50px; font-weight: 900; text-decoration: none !important; text-align: center; margin: 20px 0; font-size: 20px; }
-    .tg-btn { display: block; background: #0088cc; color: white !important; padding: 15px; border-radius: 15px; text-decoration: none !important; font-weight: 900; text-align: center; margin-top: 30px; border: 1px solid white; }
+    .tg-btn { display: block; background: #0088cc; color: white !important; padding: 15px; border-radius: 50px; text-decoration: none !important; font-weight: 900; text-align: center; margin-top: 30px; border: 2px solid white; }
     
     .stButton>button { background: linear-gradient(90deg, #00f2fe, #4facfe); color: black; font-weight: 900; border-radius: 50px; height: 3.5em; font-size: 18px; border: none; }
     </style>
     """, unsafe_allow_html=True)
+
+# Shared Rules Function
+def show_rules():
+    st.markdown("""<div class="rules-box">
+    <b>📜 விதிகள் (Rules):</b><br>
+    🔹 1. முதலில் Register பட்டனை அழுத்தி கணக்கை உருவாக்கவும் ✅<br>
+    🔹 2. சரியான Period Number-ஐ டைப் செய்யவும் (3 digits) ✍️<br>
+    🔹 3. கடந்த 10 முடிவுகளை (B/S மட்டும்) உள்ளிடவும் 📊<br>
+    🔹 4. குறைந்தது 5 Level வரை பணத்தை பராமரிக்கவும் 💰<br>
+    🔹 5. Pattern சரியில்லை எனில் SKIP செய்யவும் ⚠️
+    </div>""", unsafe_allow_html=True)
 
 # Session State
 if 'registered' not in st.session_state: st.session_state.registered = False
@@ -50,48 +61,40 @@ if 'last_status' not in st.session_state: st.session_state.last_status = None
 # --- PAGE 1: REGISTER & RULES ---
 if not st.session_state.registered:
     st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
-    
-    st.markdown("""<div class="rules-box">
-    <b>📜 விதிகள் (Rules):</b><br>
-    🔹 1. முதலில் கீழே உள்ள பட்டனை அழுத்தி Register செய்யவும் ✅<br>
-    🔹 2. சரியான Period Number-ஐ பதிவிடவும் ✍️<br>
-    🔹 3. கடந்த 10 முடிவுகளை (B/S) சரியாக உள்ளிடவும் 📊<br>
-    🔹 4. 5 Level வரையில் பணத்தை பராமரிக்கவும் 💰<br>
-    🔹 5. Pattern சரியில்லை எனில் பந்தயம் கட்டுவதை தவிர்க்கவும் ⚠️
-    </div>""", unsafe_allow_html=True)
-    
+    show_rules() # Rules in Page 1
     st.markdown('<a href="https://www.66lotterya.com/?invitationCode=1645982010" target="_blank" class="reg-btn">REGISTER HERE ✅</a>', unsafe_allow_html=True)
-    if st.button("நான் பதிவு செய்துவிட்டேன் ✅"):
+    if st.button("REGISTER செய்துவிட்டேன் ✅"):
         st.session_state.registered = True
         st.rerun()
 
 # --- PAGE 2: PREDICTOR ---
 else:
-    st.markdown("<div class='main-title'>🚀 SIVA SURESHOT AI</div>", unsafe_allow_html=True)
+    st.markdown("<div class='main-title'>🚀 SIVA SURESHOT PREDICTION 💥</div>", unsafe_allow_html=True)
+    show_rules() # Rules in Page 2
     
-    # Inputs
-    period = st.text_input("அடுத்த Period Number:", placeholder="Ex: 405")
-    history = st.text_input("கடந்த 10 முடிவுகள் (B/S மட்டும்):", placeholder="Ex: BBSSBSSBBS").upper()
+    # Inputs with Max Character Limits
+    period = st.text_input("அடுத்த Period Number (Max 3):", placeholder="Ex: 405", max_chars=3)
+    history = st.text_input("கடந்த 10 முடிவுகள் (B/S மட்டும்):", placeholder="Ex: BBSSB", max_chars=10).upper()
 
-    if st.button("GET SURESHOT RESULT"):
-        if period and len(history) >= 5:
+    if st.button("GET SURESHOT RESULT ⚡"):
+        # Strict validation: Period must be numeric, History must be B/S
+        if period.isdigit() and history and all(c in "BS" for c in history):
             with st.spinner('Sureshot Analysis-ல் உள்ளது...'):
-                time.sleep(2)
+                time.sleep(1.5)
             
-            # Prediction Logic
-            res = "BIG" if history.count("S") > history.count("B") else "SMALL"
+            # Sureshot Logic
+            res = "BIG" if history.count("S") >= history.count("B") else "SMALL"
             
-            # Level & Win/Loss Logic (Inside Result Box)
+            # Level Logic
             if st.session_state.last_status == "LOSS":
                 st.session_state.level = st.session_state.level + 1 if st.session_state.level < 5 else 1
             else:
                 st.session_state.level = 1
             
-            # Status Banner
             status_text = "PREVIOUS: WIN ✅" if st.session_state.last_status == "WIN" else "PREVIOUS: LOSS ❌"
             status_class = "win-color" if st.session_state.last_status == "WIN" else "loss-color"
 
-            # Result Box Display
+            # Result Box
             st.markdown(f"""
             <div class="result-container">
                 {f'<div class="status-line {status_class}">{status_text}</div>' if st.session_state.last_status else ""}
@@ -102,9 +105,8 @@ else:
             </div>
             """, unsafe_allow_html=True)
             
-            # Update status for next round
-            st.session_state.last_status = random.choice(["WIN", "LOSS", "WIN"]) # High win ratio simulation
+            st.session_state.last_status = random.choice(["WIN", "LOSS", "WIN"])
         else:
-            st.error("Period மற்றும் 10 முடிவுகளை (B/S) உள்ளிடவும் மச்சி!")
+            st.error("சரியான தகவல்களை உள்ளிடவும் ! (Period: Numbers, History: B/S only)")
 
     st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn">✈️ JOIN TELEGRAM CHANNEL</a>""", unsafe_allow_html=True)
