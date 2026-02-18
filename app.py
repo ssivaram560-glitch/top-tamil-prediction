@@ -5,7 +5,7 @@ import time
 # Macha, Page Setup
 st.set_page_config(page_title="siva prediction", page_icon="💰", layout="centered")
 
-# UI Styling - Full Fix
+# UI Styling - Full Fix for No Raw Code Visibility
 st.markdown("""
     <style>
     header, footer, .stDeployButton, [data-testid="stStatusWidget"] { visibility: hidden !important; }
@@ -41,21 +41,21 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Shared Rules
 def show_rules():
     st.markdown("""<div class="rules-box">
     <b>📜 விதிகள் (Rules):</b><br>
-    🔹 1. முதலில் Register பட்டனை அழுத்தி கணக்கை உருவாக்கவும் ✅<br>
-    🔹 2. சரியான Period Number-ஐ டைப் செய்யவும் (3 digits) ✍️<br>
-    🔹 3. <b>கடந்த 10 முடிவுகளை கீழே இருந்து மேலாக (Bottom to Top) type செய்யவும்</b> 💪🏼<br>
-    🔹 4. Pattern சரியில்லை எனில் SKIP செய்யவும் ⚠️<br>
-    🔹 5. Minimum 7 Level-ஐ Maintain பண்ணவும் 💰
+    🔹 1. Register பட்டனை அழுத்தி கணக்கை உருவாக்கவும் ✅<br>
+    🔹 2. Period Number (3 digits) உள்ளிடவும் ✍️<br>
+    🔹 3. <b>கீழே இருந்து மேலாக (Bottom to Top) வரிசையாக type செய்யவும்</b> 💪🏼<br>
+    🔹 4. Minimum 7 Level-ஐ Maintain பண்ணவும் 💰<br>
+    🔹 5. Level 6 வரை சென்றால் பயப்படாமல் அடுத்ததை தொடரவும் 🔥
     </div>""", unsafe_allow_html=True)
 
-# Session State for App Logic
+# State Management for Accurate History and Levels
 if 'registered' not in st.session_state: st.session_state.registered = False
 if 'current_level' not in st.session_state: st.session_state.current_level = 1
-if 'last_status' not in st.session_state: st.session_state.last_status = None
+if 'prev_prediction' not in st.session_state: st.session_state.prev_prediction = None
+if 'outcome_history' not in st.session_state: st.session_state.outcome_history = None
 
 # --- PAGE 1: REGISTER ---
 if not st.session_state.registered:
@@ -76,32 +76,41 @@ else:
 
     if st.button("GET SURESHOT RESULT ⚡"):
         if period.isdigit() and history_input and all(c in "BS" for c in history_input):
-            with st.spinner('Vision AI Scanning Trends...'):
+            with st.spinner('Scanning Trends...'):
                 time.sleep(1.2)
             
-            # --- SURESHOT LOGIC ---
-            # Predict based on majority trend
-            prediction = "BIG" if history_input.count("S") >= history_input.count("B") else "SMALL"
+            # --- REAL LOGIC ---
+            # 1. Analyze input history to determine the prediction
+            new_prediction = "BIG" if history_input.count("S") >= history_input.count("B") else "SMALL"
             
-            # Simulated outcome based on 90% Win Probability
-            # If Win (90% chance), Level resets to 1. If Loss, Level goes up.
-            outcome = random.choices(["WIN", "LOSS"], weights=[90, 10])[0]
+            # 2. Logic to check if previous prediction was correct
+            # We look at the very last character of history (latest result)
+            latest_actual = "BIG" if history_input[-1] == "B" else "SMALL"
             
-            if outcome == "WIN":
-                st.session_state.current_level = 1
+            if st.session_state.prev_prediction is not None:
+                if st.session_state.prev_prediction == latest_actual:
+                    st.session_state.outcome_history = "WIN"
+                    st.session_state.current_level = 1
+                else:
+                    st.session_state.outcome_history = "LOSS"
+                    st.session_state.current_level = st.session_state.current_level + 1 if st.session_state.current_level < 7 else 1
             else:
-                st.session_state.current_level = st.session_state.current_level + 1 if st.session_state.current_level < 7 else 1
+                st.session_state.outcome_history = "ANALYZING..."
 
-            s_text = f"PREVIOUS: {outcome} " + ("✅" if outcome == "WIN" else "❌")
-            s_class = "win-color" if outcome == "WIN" else "loss-color"
+            # Store current for next turn comparison
+            st.session_state.prev_prediction = new_prediction
 
-            # Final Result Display
+            # Result Color Styling
+            s_class = "win-color" if st.session_state.outcome_history == "WIN" else "loss-color"
+            s_emoji = "✅" if st.session_state.outcome_history == "WIN" else "❌"
+
+            # Final Display
             st.markdown(f"""
             <div class="result-container">
-                <div class="status-line {s_class}">{s_text}</div>
+                <div class="status-line {s_class}">PREVIOUS: {st.session_state.outcome_history} {s_emoji if st.session_state.outcome_history != "ANALYZING..." else ""}</div>
                 <div style="color:#ffff00; font-size:24px; font-weight:900;">PERIOD: {period}</div>
                 <h3 style='color:#00f2fe; margin-top:10px;'>அடுத்த கணிப்பு</h3>
-                <div class="prediction-txt">{prediction}</div>
+                <div class="prediction-txt">{new_prediction}</div>
                 <div style='background:white; color:black; padding:8px 30px; border-radius:15px; font-weight:900; display:inline-block; margin-top:10px;'>LEVEL {st.session_state.current_level} SURESHOT 🔥</div>
             </div>
             """, unsafe_allow_html=True)
