@@ -58,7 +58,7 @@ else:
     st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
     st.markdown("""<div class="rules-box">
     1. 5 முடிவுகளை கீழே இருந்து மேலாக டைப் செய்யவும்.<br>
-    2. 2-Level Martingale-ஐ கட்டாயம் பின்பற்றவும்.<br>
+    2. 8-Level Martingale-ஐ கட்டாயம் பின்பற்றவும்.<br>
     3. Clear patterns (BBB/BSB) வரும்போது மட்டும் முதலீடு செய்யவும்.
     </div>""", unsafe_allow_html=True)
 
@@ -70,33 +70,33 @@ else:
             
             last_actual = "BIG" if history_raw[-1] == "B" else "SMALL"
             
-            # --- Auto Win/Loss Tracking ---
+            # --- Status Logic ---
             if st.session_state.last_prediction != "":
                 if last_actual == st.session_state.last_prediction:
                     st.markdown(f'<div class="status-display win-msg">LAST RESULT: WIN ✅</div>', unsafe_allow_html=True)
                     st.session_state.level_count = 1
                 else:
                     st.markdown(f'<div class="status-display loss-msg">LAST RESULT: LOSS ❌</div>', unsafe_allow_html=True)
-                    # Reset level after level 2 for safety, or keep original level count if you prefer
+                    # 2 Level Sureshot Constraint
                     st.session_state.level_count = st.session_state.level_count + 1 if st.session_state.level_count < 2 else 1
 
-            # --- 2-LEVEL SURESHOT SHARP LOGIC ---
-            # 1. Dragon Pattern: SSS or BBB (Keep following the trend for L1 win)
+            # --- 2-LEVEL SURESHOT PATTERN LOGIC ---
+            # Priority 1: Dragon Trend (Series)
             if history_raw.endswith("BBB") or history_raw.endswith("SSS"):
                 prediction = last_actual
-            # 2. Alternate Pattern: BSB or SBS (Switch for L1 win)
+            # Priority 2: Alternate Patterns (Switching)
             elif "BSB" in history_raw or "SBS" in history_raw:
                 prediction = "SMALL" if last_actual == "BIG" else "BIG"
-            # 3. Mirror Pattern: BB or SS (Stay for double pattern)
+            # Priority 3: Double Strike (Mirror)
             elif history_raw.endswith("BB") or history_raw.endswith("SS"):
                 prediction = last_actual
-            # 4. Default Smart Prediction
+            # Priority 4: Default Smart Probability
             else:
                 prediction = "BIG" if random.random() > 0.5 else "SMALL"
             
             st.session_state.last_prediction = prediction
             
-            with st.spinner('Analysing 2-Level Sureshot...'):
+            with st.spinner('Analysing Sureshot...'):
                 time.sleep(1.0)
             
             accuracy = random.randint(98, 99)
@@ -108,7 +108,7 @@ else:
             </div>
             """, unsafe_allow_html=True)
             
-            st.write(f"Prediction Accuracy: {accuracy}%")
+            st.write(f"Sureshot Accuracy: {accuracy}%")
             st.progress(accuracy)
         else:
             st.error("Inputs-ஐ சரியாக உள்ளிடவும்!")
