@@ -1,4 +1,4 @@
- import streamlit as st
+import streamlit as st
 import random
 import time
 from PIL import Image
@@ -108,3 +108,4 @@ else:
         st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn">JOIN TELEGRAM CHANNEL</a>""", unsafe_allow_html=True)
+
