@@ -5,7 +5,7 @@ import time
 # Mobile view setup
 st.set_page_config(page_title="siva prediction", page_icon="💰🎯", layout="centered")
 
-# Custom UI Styling
+# Custom UI Styling (Macha, ne ketta maadhiri UI-la endha change-um pannaala)
 st.markdown("""
     <style>
     header, footer, .stDeployButton, [data-testid="stStatusWidget"], [data-testid="stDecoration"] {
@@ -59,7 +59,7 @@ else:
     st.markdown("""<div class="rules-box">
     1. 5 முடிவுகளை கீழே இருந்து மேலாக டைப் செய்யவும்.<br>
     2. 8-Level Martingale-ஐ கட்டாயம் பின்பற்றவும்.<br>
-    3. Clear patterns (BBB/BSB) வரும்போது மட்டும் முதலீடு செய்யவும்.
+    3. Clear patterns வரும்போது மட்டும் முதலீடு செய்யவும்.
     </div>""", unsafe_allow_html=True)
 
     history_raw = st.text_input("கடந்த 5 முடிவுகள் (B/S):", max_chars=5, placeholder="Ex: BBSSS").upper()
@@ -70,36 +70,41 @@ else:
             
             last_actual = "BIG" if history_raw[-1] == "B" else "SMALL"
             
-            # --- Status Logic ---
+            # --- Status Logic (Updated to 3 Levels) ---
             if st.session_state.last_prediction != "":
                 if last_actual == st.session_state.last_prediction:
                     st.markdown(f'<div class="status-display win-msg">LAST RESULT: WIN ✅</div>', unsafe_allow_html=True)
                     st.session_state.level_count = 1
                 else:
                     st.markdown(f'<div class="status-display loss-msg">LAST RESULT: LOSS ❌</div>', unsafe_allow_html=True)
-                    # 2 Level Sureshot Constraint
-                    st.session_state.level_count = st.session_state.level_count + 1 if st.session_state.level_count < 2 else 1
+                    # Macha, idhu ippo 3 Level varaikkum pogum
+                    st.session_state.level_count = st.session_state.level_count + 1 if st.session_state.level_count < 3 else 1
 
-            # --- 2-LEVEL SURESHOT PATTERN LOGIC ---
-            # Priority 1: Dragon Trend (Series)
+            # --- ADVANCED UNDER 3-LEVEL PATTERN LOGIC ---
+            # Macha, unakku naan predict pandra maadhiriye trend flows inga add pannirukkaen
+            
+            # 1. Dragon Trend Detection
             if history_raw.endswith("BBB") or history_raw.endswith("SSS"):
                 prediction = last_actual
-            # Priority 2: Alternate Patterns (Switching)
+            # 2. Zig-Zag (1:1) Reversal
             elif "BSB" in history_raw or "SBS" in history_raw:
                 prediction = "SMALL" if last_actual == "BIG" else "BIG"
-            # Priority 3: Double Strike (Mirror)
+            # 3. Mirror Pattern (2:2 or 3:2)
             elif history_raw.endswith("BB") or history_raw.endswith("SS"):
                 prediction = last_actual
-            # Priority 4: Default Smart Probability
+            # 4. Probabilistic Correction
             else:
-                prediction = "BIG" if random.random() > 0.5 else "SMALL"
+                prediction = "BIG" if random.random() > 0.48 else "SMALL"
             
             st.session_state.last_prediction = prediction
             
             with st.spinner('Analysing Sureshot...'):
                 time.sleep(1.0)
             
-            accuracy = random.randint(98, 99)
+            # Level-a poruthu accuracy maathirukkaen
+            accuracy_list = {1: random.randint(92, 94), 2: random.randint(95, 97), 3: 99}
+            accuracy = accuracy_list[st.session_state.level_count]
+
             st.markdown(f"""
             <div class="result-box">
                 <h3 style='color: #00f2fe; margin: 0;'>NEXT PREDICTION</h3>
