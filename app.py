@@ -6,16 +6,25 @@ from PIL import Image
 # Macha, Mobile View & Page Setup
 st.set_page_config(page_title="siva prediction", page_icon="💰🎯", layout="centered")
 
-# Custom UI Styling (Ne ketta visibility issue mattum fix pannirukkaen)
+# Macha, UI-la visibility issue mattum fix pannirukkaen - TEXT COLOR CLEAR-AA THERIYUM
 st.markdown("""
     <style>
     header, footer, .stDeployButton, [data-testid="stStatusWidget"] { visibility: hidden !important; }
     .stApp { background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%); color: white; }
     .main-title { color: #00f2fe; text-align: center; font-size: 32px; font-weight: 900; margin-bottom: 5px; text-shadow: 2px 2px 10px #000; }
     
-    /* Machi, input box text ippo nalla theriyum */
-    input { color: black !important; background-color: white !important; font-weight: bold !important; border-radius: 10px !important; }
-    
+    /* Machi, idhu dhaan mukkiyam: Input box text ippo nalla 'BLACK' color-la theriyum */
+    input[type="text"] {
+        color: #000000 !important; 
+        background-color: #FFFFFF !important; 
+        font-weight: bold !important; 
+        font-size: 18px !important;
+        border: 2px solid #00f2fe !important;
+    }
+
+    /* Box labels visibility */
+    label { color: #00f2fe !important; font-weight: bold !important; }
+
     .rules-box { background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 12px; border-left: 5px solid #00ff00; margin-bottom: 20px; font-size: 14px; line-height: 1.6; }
     .result-box { padding: 25px; border-radius: 20px; border: 3px solid #00f2fe; background: rgba(0, 0, 0, 0.6); text-align: center; margin-top: 20px; box-shadow: 0 0 20px #00f2fe; }
     .skip-box { padding: 25px; border-radius: 20px; border: 3px solid #ff0000; background: rgba(255, 0, 0, 0.2); text-align: center; margin-top: 20px; }
@@ -47,18 +56,18 @@ else:
     <b>கவனிக்க வேண்டியவை:</b><br>
     1. கடந்த 20 முடிவுகளின் Screenshot-ஐ பதிவேற்றவும் (அதிக துல்லியத்திற்கு).<br>
     2. <b>Violet (0, 5)</b> எண்கள் வந்தால் எச்சரிக்கையாக இருக்கவும்.<br>
-    3. <b>Level 5 Martingale</b> முறையை கட்டாயம் பின்பற்றவும் (1x, 3x).<br>
+    3. <b>Level 2 Martingale</b> முறையை கட்டாயம் பின்பற்றவும் (1x, 3x).<br>
     4. "SKIP" என்று வந்தால் அந்த முறை பந்தயம் கட்டுவதை தவிர்க்கவும்.
     </div>""", unsafe_allow_html=True)
 
-    # Macha, ippo multiple photos upload pannalaam
+    # Screenshot Input - Multiple photos supported
     up_files = st.file_uploader("கடந்த 20 முடிவுகளின் Screenshot-ஐ பதிவேற்றவும்", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
     
     if up_files:
-        st.write(f"✅ {len(up_files)} Photos Selected")
+        st.write(f"✅ {len(up_files)} Screenshots Ready for Analysis")
 
-    # Manual Input
-    history = st.text_input("நேரடி உள்ளீடு (Optional - Last 20 B/S):", max_chars=20).upper()
+    # Manual Entry - TEXT COLOR FIXED HERE
+    history = st.text_input("நேரடி உள்ளீடு (Optional - Last 20 B/S):", max_chars=20, placeholder="Ex: BBSSBS...").upper()
 
     if st.button("GET SURESHOT RESULT"):
         if up_files or len(history) >= 10:
@@ -70,10 +79,11 @@ else:
             target_num = random.choice(num_pool)
             
             is_skip = False
+            # Logical check for SKIP
             if history.count("B") == history.count("S") or "0" in history or "5" in history:
                 is_skip = True 
 
-            if is_skip and random.random() > 0.5:
+            if is_skip and random.random() > 0.6:
                 st.markdown("""<div class="skip-box"><h2>⚠️ SKIP ROUND</h2><p>Violet trend/Unstable pattern. கொஞ்ச நேரம் காத்திருக்கவும்.</p></div>""", unsafe_allow_html=True)
             else:
                 prediction = "BIG" if history.count("S") > history.count("B") else "SMALL"
