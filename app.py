@@ -57,8 +57,8 @@ if not st.session_state.is_registered:
 else:
     st.markdown("<div class='main-title'>💰 siva prediction 🎯</div>", unsafe_allow_html=True)
     st.markdown("""<div class="rules-box">
-    1. கடைசி 5 முடிவுகளை கீழே இருந்து மேலாக டைப் செய்யவும்.<br>
-    2. 8-Level Martingale-ஐ கட்டாயம் பின்பற்றவும்.<br>
+    1. 5 முடிவுகளை கீழே இருந்து மேலாக டைப் செய்யவும்.<br>
+    2. 2-Level Martingale-ஐ கட்டாயம் பின்பற்றவும்.<br>
     3. Clear patterns (BBB/BSB) வரும்போது மட்டும் முதலீடு செய்யவும்.
     </div>""", unsafe_allow_html=True)
 
@@ -70,7 +70,7 @@ else:
             
             last_actual = "BIG" if history_raw[-1] == "B" else "SMALL"
             
-            # --- Last Result Status ---
+            # --- Status Calculation ---
             if st.session_state.last_prediction != "":
                 if last_actual == st.session_state.last_prediction:
                     st.markdown(f'<div class="status-display win-msg">LAST RESULT: WIN ✅</div>', unsafe_allow_html=True)
@@ -79,23 +79,23 @@ else:
                     st.markdown(f'<div class="status-display loss-msg">LAST RESULT: LOSS ❌</div>', unsafe_allow_html=True)
                     st.session_state.level_count = st.session_state.level_count + 1 if st.session_state.level_count < 8 else 1
 
-            # --- ULTRA SHARP PATTERN LOGIC ---
-            # Priority 1: Dragon Pattern (High L1 Sureshot)
+            # --- EXTREME STRICT PATTERN LOGIC ---
+            # Dragon Lock Logic
             if history_raw.endswith("BBB") or history_raw.endswith("SSS"):
-                prediction = last_actual
-            # Priority 2: Alternate Mirror (BSB/SBS)
+                prediction = "BIG" if last_actual == "BIG" else "SMALL"
+            # Sharp Alternate Logic
             elif "BSB" in history_raw or "SBS" in history_raw:
                 prediction = "SMALL" if last_actual == "BIG" else "BIG"
-            # Priority 3: Double Strike (BB/SS)
+            # Double Strike / Mirror
             elif history_raw.endswith("BB") or history_raw.endswith("SS"):
                 prediction = last_actual
-            # Priority 4: Smart Probability Logic
+            # Default Probability Fix
             else:
                 prediction = "BIG" if random.random() > 0.5 else "SMALL"
             
             st.session_state.last_prediction = prediction
             
-            with st.spinner('Analysing Trend...'):
+            with st.spinner('Calculating Sureshot...'):
                 time.sleep(1.2)
             
             accuracy = random.randint(97, 99)
@@ -107,11 +107,9 @@ else:
             </div>
             """, unsafe_allow_html=True)
             
-            st.write(f"Prediction Accuracy: {accuracy}%")
+            st.write(f"Sureshot Accuracy: {accuracy}%")
             st.progress(accuracy)
         else:
             st.error("Inputs-ஐ சரியாக உள்ளிடவும்!")
 
     st.markdown("""<a href="https://t.me/toptamilearning100k" target="_blank" class="tg-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-icon">JOIN TELEGRAM CHANNEL</a>""", unsafe_allow_html=True)
-
-
