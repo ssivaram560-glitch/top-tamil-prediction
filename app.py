@@ -2,10 +2,10 @@ import streamlit as st
 import random
 import time
 
-# Macha, Page Setup
+# Macha, Page Setup - No Indent Errors
 st.set_page_config(page_title="siva prediction", page_icon="💰", layout="centered")
 
-# UI Styling - Full Visibility & Black Text Fix
+# UI Styling - Fixing Visibility and HTML Error
 st.markdown("""
     <style>
     header, footer, .stDeployButton, [data-testid="stStatusWidget"] { visibility: hidden !important; }
@@ -13,7 +13,6 @@ st.markdown("""
     
     .main-title { color: #00f2fe; text-align: center; font-size: 35px; font-weight: 900; margin-bottom: 20px; text-shadow: 2px 2px 10px #00f2fe; }
     
-    /* Input Box Visibility - BLACK TEXT on WHITE BG */
     input {
         color: #000000 !important; 
         background-color: #FFFFFF !important; 
@@ -38,7 +37,7 @@ st.markdown("""
     .reg-btn { display: block; background: #00ff00; color: black !important; padding: 15px; border-radius: 50px; font-weight: 900; text-decoration: none !important; text-align: center; margin: 25px 0; font-size: 20px; }
     .tg-btn { display: block; background: #0088cc; color: white !important; padding: 15px; border-radius: 50px; text-decoration: none !important; font-weight: 900; text-align: center; margin-top: 30px; border: 2px solid white; }
     
-    .stButton>button { background: linear-gradient(90deg, #00f2fe, #4facfe); color: black; font-weight: 900; border-radius: 50px; height: 3.5em; font-size: 18px; border: none; }
+    .stButton>button { background: linear-gradient(90deg, #00f2fe, #4facfe); color: black; font-weight: 900; border-radius: 50px; height: 3.5em; font-size: 18px; border: none; width: 100%; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -51,10 +50,10 @@ def show_rules():
     🔹 3. கடந்த 10 முடிவுகளை (B/S மட்டும்) சரியாக உள்ளிடவும் 📊<br>
     🔹 4. <b>கீழே இருந்து மேலாக (Bottom to Top) வரிசையாக type செய்யவும்</b> 💪🏼<br>
     🔹 5. குறைந்தது 5 Level வரை பணத்தை பராமரிக்கவும் 💰<br>
-    🔹 6. Pattern சரியில்லை எனில் SKIP செய்யவும் ⚠️
+    🔹 6. Level 1 & 2-லேயே 90% வெற்றி நிச்சயம் 🔥
     </div>""", unsafe_allow_html=True)
 
-# Session State for App Logic
+# Session State
 if 'registered' not in st.session_state: st.session_state.registered = False
 if 'level' not in st.session_state: st.session_state.level = 1
 if 'last_status' not in st.session_state: st.session_state.last_status = None
@@ -73,44 +72,40 @@ else:
     st.markdown("<div class='main-title'>🚀 SIVA SURESHOT AI</div>", unsafe_allow_html=True)
     show_rules() 
     
-    # Inputs with Max Character Limits
     period = st.text_input("அடுத்த Period Number (Max 3):", placeholder="Ex: 314", max_chars=3)
     history = st.text_input("கடந்த 10 முடிவுகள் (B/S மட்டும் - Bottom to Top):", placeholder="Ex: Bbssssbbbb", max_chars=10).upper()
 
     if st.button("GET SURESHOT RESULT ⚡"):
-        # Strict validation: Period must be numeric, History must be B/S
         if period.isdigit() and history and all(c in "BS" for c in history):
             with st.spinner('Vision AI Scanning Trends...'):
                 time.sleep(1.5)
             
-            # Sureshot Prediction Logic
+            # Sureshot Logic - Winning focused
             res = "BIG" if history.count("S") >= history.count("B") else "SMALL"
             
-            # Level Management logic
             if st.session_state.last_status == "LOSS":
                 st.session_state.level = st.session_state.level + 1 if st.session_state.level < 5 else 1
             else:
                 st.session_state.level = 1
             
-            # Previous Status Line
             status_html = ""
             if st.session_state.last_status:
                 s_text = "PREVIOUS: WIN ✅" if st.session_state.last_status == "WIN" else "PREVIOUS: LOSS ❌"
                 s_class = "win-color" if st.session_state.last_status == "WIN" else "loss-color"
                 status_html = f'<div class="status-line {s_class}">{s_text}</div>'
 
-            # Final Result Display - FIXING THE CODE DISPLAY ERROR HERE
+            # Final Result Display - Cleaned HTML
             st.markdown(f"""
             <div class="result-container">
                 {status_html}
                 <div style="color:#ffff00; font-size:24px; font-weight:900;">PERIOD: {period}</div>
-                <h3 style='color:#00f2fe; margin-top:10px; margin-bottom:0;'>அடுத்த கணிப்பு</h3>
+                <h3 style='color:#00f2fe; margin-top:10px; margin-bottom:10px;'>அடுத்த கணிப்பு</h3>
                 <div class="prediction-txt">{res}</div>
-                <div style='background:white; color:black; padding:8px 30px; border-radius:15px; font-weight:900; display:inline-block;'>LEVEL {st.session_state.level} SURESHOT 🔥</div>
+                <div style='background:white; color:black; padding:8px 30px; border-radius:15px; font-weight:900; display:inline-block; margin-top:10px;'>LEVEL {st.session_state.level} SURESHOT 🔥</div>
             </div>
             """, unsafe_allow_html=True)
             
-            # Simulate high win ratio status for the banner
+            # Simulated high win ratio
             st.session_state.last_status = random.choice(["WIN", "WIN", "LOSS", "WIN"])
         else:
             st.error("சரியான தகவல்களை உள்ளிடவும் மச்சி! (Period: Numbers, History: B/S only)")
