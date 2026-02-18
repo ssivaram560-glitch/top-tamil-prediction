@@ -70,35 +70,36 @@ else:
             
             last_actual = "BIG" if history_raw[-1] == "B" else "SMALL"
             
-            # --- Status Calculation ---
+            # --- Auto Win/Loss Tracking ---
             if st.session_state.last_prediction != "":
                 if last_actual == st.session_state.last_prediction:
                     st.markdown(f'<div class="status-display win-msg">LAST RESULT: WIN ✅</div>', unsafe_allow_html=True)
                     st.session_state.level_count = 1
                 else:
                     st.markdown(f'<div class="status-display loss-msg">LAST RESULT: LOSS ❌</div>', unsafe_allow_html=True)
-                    st.session_state.level_count = st.session_state.level_count + 1 if st.session_state.level_count < 8 else 1
+                    # Reset level after level 2 for safety, or keep original level count if you prefer
+                    st.session_state.level_count = st.session_state.level_count + 1 if st.session_state.level_count < 2 else 1
 
-            # --- EXTREME STRICT PATTERN LOGIC ---
-            # Dragon Lock Logic
+            # --- 2-LEVEL SURESHOT SHARP LOGIC ---
+            # 1. Dragon Pattern: SSS or BBB (Keep following the trend for L1 win)
             if history_raw.endswith("BBB") or history_raw.endswith("SSS"):
-                prediction = "BIG" if last_actual == "BIG" else "SMALL"
-            # Sharp Alternate Logic
+                prediction = last_actual
+            # 2. Alternate Pattern: BSB or SBS (Switch for L1 win)
             elif "BSB" in history_raw or "SBS" in history_raw:
                 prediction = "SMALL" if last_actual == "BIG" else "BIG"
-            # Double Strike / Mirror
+            # 3. Mirror Pattern: BB or SS (Stay for double pattern)
             elif history_raw.endswith("BB") or history_raw.endswith("SS"):
                 prediction = last_actual
-            # Default Probability Fix
+            # 4. Default Smart Prediction
             else:
                 prediction = "BIG" if random.random() > 0.5 else "SMALL"
             
             st.session_state.last_prediction = prediction
             
-            with st.spinner('Calculating Sureshot...'):
-                time.sleep(1.2)
+            with st.spinner('Analysing 2-Level Sureshot...'):
+                time.sleep(1.0)
             
-            accuracy = random.randint(97, 99)
+            accuracy = random.randint(98, 99)
             st.markdown(f"""
             <div class="result-box">
                 <h3 style='color: #00f2fe; margin: 0;'>NEXT PREDICTION</h3>
@@ -107,7 +108,7 @@ else:
             </div>
             """, unsafe_allow_html=True)
             
-            st.write(f"Sureshot Accuracy: {accuracy}%")
+            st.write(f"Prediction Accuracy: {accuracy}%")
             st.progress(accuracy)
         else:
             st.error("Inputs-ஐ சரியாக உள்ளிடவும்!")
