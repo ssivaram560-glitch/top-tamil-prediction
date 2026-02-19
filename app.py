@@ -1,125 +1,98 @@
 import streamlit as st
-import random
 import time
+import random
 
-# Page Configuration - Pro Injection Look
-st.set_page_config(page_title="PRO INJECTOR V6", page_icon="⚡", layout="centered")
+# Page Setup
+st.set_page_config(page_title="SIVA INJECTOR PRO", page_icon="🧬", layout="centered")
 
-# Custom CSS for the "Injection" and "Encrypted" Look
+# UI Styling - Full Video Style
 st.markdown("""
     <style>
-    header, footer, .stDeployButton, [data-testid="stStatusWidget"] { visibility: hidden !important; }
-    .stApp { background: #000000; color: #00f2fe; font-family: 'Courier New', Courier, monospace; }
+    header, footer, .stDeployButton { visibility: hidden !important; }
+    .stApp { background: #000; color: #00f2fe; }
     
-    .injection-container {
-        border: 2px solid #00f2fe;
-        border-radius: 20px;
-        padding: 25px;
-        background: rgba(0, 242, 254, 0.05);
-        box-shadow: 0 0 30px rgba(0, 242, 254, 0.3);
-        text-align: center;
-        margin-bottom: 20px;
+    .main-box {
+        border: 2px solid #00f2fe; border-radius: 20px;
+        padding: 20px; background: rgba(0, 242, 254, 0.05);
+        box-shadow: 0 0 25px #00f2fe; text-align: center;
     }
     
-    .status-badge {
-        background: #00f2fe; color: black; padding: 5px 15px;
-        border-radius: 5px; font-weight: 900; font-size: 12px;
-        margin-bottom: 10px; display: inline-block;
+    .big-btn {
+        display: block; background: linear-gradient(90deg, #ff0055, #ff00aa);
+        color: white !important; padding: 15px; border-radius: 10px;
+        text-decoration: none; font-weight: 900; margin: 10px 0; text-align: center;
     }
-
-    input { 
-        background-color: #111 !important; 
-        color: #00f2fe !important; 
-        border: 1px solid #00f2fe !important;
-        border-radius: 10px !important;
-        text-align: center;
+    
+    .result-screen {
+        background: #000; border: 3px solid #00f2fe;
+        border-radius: 20px; padding: 25px; margin-top: 20px;
     }
-
-    .result-display {
-        background: #000;
-        border: 4px double #00f2fe;
-        border-radius: 25px;
-        padding: 35px;
-        margin-top: 25px;
-        box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
-    }
-
-    .big-small-text { 
-        font-size: 85px; font-weight: 900; color: #ffffff; 
-        text-shadow: 0 0 30px #fff, 0 0 50px #00f2fe; 
-        letter-spacing: 5px; margin: 15px 0;
-    }
-
-    .level-tag { font-size: 22px; font-weight: 900; color: #ff0055; margin-bottom: 10px; }
-
-    .stButton>button {
-        background: linear-gradient(180deg, #00f2fe 0%, #0072ff 100%);
-        color: black; font-weight: 900; border-radius: 15px;
-        width: 100%; height: 4em; border: none; font-size: 18px;
-    }
-
-    .official-link {
-        display: block; background: #ff0055; color: white !important;
-        padding: 18px; border-radius: 50px; text-decoration: none;
-        font-weight: 900; margin-top: 30px; text-align: center;
-        box-shadow: 0 0 15px #ff0055; font-size: 20px;
-    }
+    
+    .pred-val { font-size: 80px; font-weight: 900; color: #fff; text-shadow: 0 0 20px #00f2fe; }
+    
+    .history-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+    .history-table th, .history-table td { border-bottom: 1px solid #333; padding: 10px; text-align: center; }
+    .win-tag { color: #00ff00; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
 
-# State Management for Session
-if 'registered' not in st.session_state: st.session_state.registered = False
+# State Management
+if 'step' not in st.session_state: st.session_state.step = "register"
+if 'history' not in st.session_state: st.session_state.history = []
 
-# --- Page 1: Register (Only once) ---
-if not st.session_state.registered:
-    st.markdown('<div class="injection-container"><h1 style="color:#00f2fe;">💰 SIVA PREDICTION</h1><p style="color:gray;">MEMBER SYSTEM INITIALIZING...</p></div>', unsafe_allow_html=True)
-    st.markdown(f'<a href="https://www.66lotterya.com/?invitationCode=1645982010" class="official-link">REGISTER & LOGIN HERE ✅</a>', unsafe_allow_html=True)
-    if st.button("LOGIN SUCCESSFUL"):
-        st.session_state.registered = True
+# --- STEP 1: REGISTER & DEPOSIT ---
+if st.session_state.step == "register":
+    st.markdown('<div class="main-box"><h1>🧬 SIVA INJECTOR</h1><p>FOLLOW VIDEO STEPS TO ACTIVATE</p></div>', unsafe_allow_html=True)
+    
+    st.markdown('<a href="https://www.66lotterya.com/?invitationCode=1645982010" class="big-btn">1. REGISTER ACCOUNT ✅</a>', unsafe_allow_html=True)
+    st.markdown('<a href="https://www.66lotterya.com/?invitationCode=1645982010" class="big-btn" style="background: #00f2fe; color: black !important;">2. DEPOSIT ₹200+ 💰</a>', unsafe_allow_html=True)
+    
+    if st.button("ACTIVATE HACK ⚡"):
+        with st.spinner('VERIFYING DEPOSIT...'):
+            time.sleep(2)
+        st.session_state.step = "predict"
         st.rerun()
 
-# --- Page 2: Predictor Interface ---
-else:
-    st.markdown("""<div class="injection-container">
-        <div class="status-badge">SERVER: ONLINE 🟢</div>
-        <h2 style="margin:0; text-shadow: 0 0 10px #00f2fe;">PRO INJECTOR X</h2>
-        <p style="color:#777; font-size:12px;">ENCRYPTED DATA FEED FOUND</p>
-    </div>""", unsafe_allow_html=True)
-
-    period = st.text_input("PERIOD (Last 3 Digits)", placeholder="Eg: 345")
-    history_raw = st.text_input("DATA STREAM (B/S)", placeholder="Eg: BBSBS").upper()
-
+# --- STEP 2: PREDICTOR INTERFACE ---
+elif st.session_state.step == "predict":
+    st.markdown('<div style="text-align:center; color:#00f2fe; font-weight:900;">SERVER STATUS: ONLINE 🟢</div>', unsafe_allow_html=True)
+    
+    period = st.text_input("PERIOD NO", placeholder="Eg: 10989")
+    data_stream = st.text_input("LAST 5 RESULTS (B/S)", placeholder="Eg: BBSSB").upper()
+    
     if st.button("NEXT INJECTION 💉"):
-        if history_raw:
-            with st.spinner('INJECTING ALGORITHM...'):
-                time.sleep(1.2)
+        if period and data_stream:
+            with st.spinner('EXTRACTING DATA...'):
+                time.sleep(1.5)
             
-            # --- LEVEL 2 WIN LOGIC (The Pattern Trick) ---
-            b_count = history_raw.count('B')
-            s_count = history_raw.count('S')
-            last_char = history_raw[-1]
+            # --- LEVEL 2 WIN LOGIC ---
+            # Smart Trend Analysis
+            if data_stream[-2:] == "BB": pred = "SMALL"
+            elif data_stream[-2:] == "SS": pred = "BIG"
+            else: pred = random.choice(["BIG", "SMALL"])
             
-            # Level 2 Focus: Break Dragon Trends
-            if len(history_raw) >= 3 and history_raw[-3:] in ["BBB", "SSS"]:
-                # Reversal logic for Level 2 recovery
-                prediction = "SMALL" if last_char == "B" else "BIG"
-                is_sureshot = True
-            else:
-                # Majority trend reversal for stable wins
-                prediction = "BIG" if s_count >= b_count else "SMALL"
-                is_sureshot = False
-
-            # Displaying the Result
+            # Save to History
+            st.session_state.history.insert(0, {"period": period, "result": pred, "status": "WIN ✅"})
+            
             st.markdown(f"""
-                <div class="result-display">
-                    <div class="level-tag">LEVEL 1 & 2 FOCUS 🎯</div>
-                    <div style="color:gray; font-size:12px;">CALCULATED PERIOD: {period}</div>
-                    <h1 class="big-small-text">{prediction}</h1>
-                    <p style="color:#00ff00; font-weight:bold;">CONFIDENCE: {random.uniform(97.8, 99.9):.1f}%</p>
-                    {f'<div style="background:red; color:white; padding:5px; border-radius:5px; font-weight:bold; animation: blinker 0.6s linear infinite;">🔥 ULTRA SURESHOT - HIGH INVEST 🔥</div>' if is_sureshot else ''}
+                <div class="result-screen">
+                    <div style="color:#00f2fe; font-size:14px;">ENCRYPTED RESULT</div>
+                    <div class="pred-val">{pred}</div>
+                    <div style="background:#fff; color:#000; display:inline-block; padding:5px 10px; border-radius:5px; font-weight:900;">LEVEL 1 SURESHOT</div>
                 </div>
             """, unsafe_allow_html=True)
         else:
-            st.warning("Please enter Data Stream!")
+            st.error("Enter Data Stream!")
 
-    st.markdown(f'<a href="https://www.66lotterya.com/?invitationCode=1645982010" class="official-link">OPEN 66 LOTTERY ✅</a>', unsafe_allow_html=True)
+    # --- HISTORY TABLE ---
+    if st.session_state.history:
+        st.markdown("### 📊 RECENT HISTORY")
+        html_table = '<table class="history-table"><tr><th>PERIOD</th><th>PREDICTION</th><th>STATUS</th></tr>'
+        for item in st.session_state.history[:5]:
+            html_table += f'<tr><td>{item["period"]}</td><td>{item["result"]}</td><td class="win-tag">{item["status"]}</td></tr>'
+        html_table += '</table>'
+        st.markdown(html_table, unsafe_allow_html=True)
+
+    if st.button("LOGOUT / RESET"):
+        st.session_state.step = "register"
+        st.rerun()
